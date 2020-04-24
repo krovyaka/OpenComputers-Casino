@@ -37,11 +37,11 @@ local libs = {
     }
 }
 
-function drawStatic()
-    casino.drawRectangleWithCenterText(1, 1, 160, 5, state.title, 0x431148, 0xffffff)
+local function drawStatic()
+    casino.drawRectangleWithCenterText(1, 1, 160, 5, state.title, 0x431148, 0xFFFFFF)
 end
 
-function drawDynamic()
+local function drawDynamic()
     casino.drawRectangle(1, 6, 48, 45, 0xF2F2F2)
     casino.drawRectangle(49, 6, 112, 45, 0xFFFFFF)
     for i = 1, #games do
@@ -57,10 +57,13 @@ function drawDynamic()
     buffer.drawImage(51, 7, image.load(imgPath))  -- 50х32
     buffer.drawChanges()
 
+    casino.setBackground(0xFFFFFF)
+    casino.writeCenter(133, 7, currentGame.title, 0x000000)
+    casino.drawBigText(102, 9, 57, currentGame.description)
     casino.drawRectangleWithCenterText(51, 40, 50, 5, "Играть", 0x431148, 0xffffff)
 end
 
-function initLauncher()
+local function initLauncher()
     for i = 1, #libs do
         casino.downloadFile(libs[i].url, libs[i].path)
     end
@@ -72,3 +75,5 @@ end
 initLauncher()
 drawStatic()
 drawDynamic()
+
+
