@@ -1,4 +1,5 @@
 local casino = require("casino")
+local event = require("event")
 local games
 local image
 local buffer
@@ -75,5 +76,19 @@ end
 initLauncher()
 drawStatic()
 drawDynamic()
+
+for i = 1, 5 do
+    local e, _, x, y = event.pull("touch")
+    if (e == "touch") then
+        if (x >= 2 and x <= 47 and y >= 7 and ((y - 2) % 4)) then
+            local selection = math.floor((y - 3) / 4)
+            print(selection)
+            if (selection <= #games) then
+                state.selection = selection
+                drawDynamic()
+            end
+        end
+    end
+end
 
 

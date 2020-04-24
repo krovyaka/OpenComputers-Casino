@@ -24,9 +24,9 @@ table.insert(games, {
 
 table.insert(games, {
     title = "Блэкджек",
-    file = "game_Black_jack.lua",
+    file = "game_Blackjack.lua",
     available = true,
-    image = "game_Black_jack.pic",
+    image = "game_Blackjack.pic",
     author = "Durex77",
     description = "Описание временно недоступно"
 })
