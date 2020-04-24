@@ -28,7 +28,7 @@ end
 
 casino.downloadFile = function(url, saveTo, forceRewrite)
     if forceRewrite or not filesystem.exists(saveTo) then
-        shell.execute("wget -fq " .. url)
+        shell.execute("wget -fq " .. url .. " " .. saveTo)
     end
 end
 

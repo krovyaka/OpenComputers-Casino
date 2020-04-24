@@ -32,10 +32,6 @@ local libs = {
         path = "/lib/doubleBuffering.lua"
     },
     {
-        url = "https://raw.githubusercontent.com/IgorTimofeev/MineOS/master/Applications/draw.lua",
-        path = "draw.lua"
-    },
-    {
         url = repository .. "/games.lua",
         path = "/lib/games.lua"
     }
@@ -53,10 +49,15 @@ function drawDynamic()
             casino.drawRectangleWithCenterText(2, 3 + i * 4, 46, 3, games[i].title, 0xE3E3E3, 0x000000)
         end
     end
-    casino.drawRectangleWithCenterText(51, 40, 50, 5, "Играть", 0x431148, 0xffffff)
+
+    local currentGame = games[state.selection]
+    local imgPath = "/home/images/games_logo/" .. currentGame.image
+    casino.downloadFile(repository .. "/resources/images/games_logo/" .. currentGame.image, imgPath)
     buffer.flush()
-    buffer.drawImage(51, 7, image.load("/home/games/game_Roulette.pic")) -- 50х32
+    buffer.drawImage(51, 7, image.load(imgPath))  -- 50х32
     buffer.drawChanges()
+
+    casino.drawRectangleWithCenterText(51, 40, 50, 5, "Играть", 0x431148, 0xffffff)
 end
 
 function initLauncher()
