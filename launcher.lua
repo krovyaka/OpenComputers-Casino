@@ -12,23 +12,23 @@ local state = {
 
 local libs = {
     {
-        url = "https://raw.githubusercontent.com/IgorTimofeev/AdvancedLua/master/AdvancedLua.lua",
+        url = repository .. "/external/IgorTimofeev/AdvancedLua.lua",
         path = "/lib/advancedLua.lua"
     },
     {
-        url = "https://raw.githubusercontent.com/IgorTimofeev/Color/master/Color.lua",
+        url = repository .. "/external/IgorTimofeev/Color.lua",
         path = "/lib/color.lua"
     },
     {
-        url = "https://raw.githubusercontent.com/IgorTimofeev/Image/master/OCIF.lua",
+        url = repository .. "/external/IgorTimofeev/OCIF.lua",
         path = "/lib/FormatModules/OCIF.lua"
     },
     {
-        url = "https://raw.githubusercontent.com/IgorTimofeev/Image/master/Image.lua",
+        url = repository .. "/external/IgorTimofeev/Image.lua",
         path = "/lib/image.lua"
     },
     {
-        url = "https://raw.githubusercontent.com/IgorTimofeev/DoubleBuffering/master/DoubleBuffering.lua",
+        url = repository .. "/external/IgorTimofeev/DoubleBuffering.lua",
         path = "/lib/doubleBuffering.lua"
     },
     {
