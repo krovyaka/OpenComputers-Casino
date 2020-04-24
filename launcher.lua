@@ -1,5 +1,6 @@
 local casino = require("casino")
 local event = require("event")
+local shell = require("shell")
 local games
 local image
 local buffer
@@ -10,6 +11,8 @@ local state = {
     title = "/warp casino",
     selection = 1;
 }
+
+local requiredDirectories = { "/lib/FormatModules", "/home/images/", "/home/images/games_logo", "/home/apps" }
 
 local libs = {
     {
@@ -39,6 +42,7 @@ local libs = {
 }
 
 local function drawStatic()
+    casino.setResolution(160, 50)
     casino.drawRectangleWithCenterText(1, 1, 160, 5, state.title, 0x431148, 0xFFFFFF)
 end
 
@@ -65,6 +69,9 @@ local function drawDynamic()
 end
 
 local function initLauncher()
+    for i = 1, #requiredDirectories do
+        shell.execute("md " .. requiredDirectories[i])
+    end
     for i = 1, #libs do
         casino.downloadFile(libs[i].url, libs[i].path)
     end
@@ -80,15 +87,23 @@ drawDynamic()
 for i = 1, 5 do
     local e, _, x, y = event.pull("touch")
     if (e == "touch") then
+        -- Left menu buttons
         if (x >= 2 and x <= 47 and y >= 7 and ((y - 2) % 4)) then
             local selection = math.floor((y - 3) / 4)
-            print(selection)
             if (selection <= #games) then
                 state.selection = selection
                 drawDynamic()
             end
         end
+        if (x >= 51 and y >= 40 and x <= 100 and y <= 44) then
+            local currentGame = games[state.selection]
+            casino.downloadFile(repository .. "/apps/" .. currentGame.file, "/home/apps/" .. currentGame.file)
+            local result, errorMsg = pcall(loadfile("/home/apps/" .. currentGame.file))
+            drawStatic()
+            drawDynamic()
+        end
     end
+
 end
 
 

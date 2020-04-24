@@ -339,13 +339,13 @@ function drawDisplay()
 
 	function rewardPlayer(player,reward,msg)
 		if (reward>0) then
-			localsay("Вы выиграли "..reward)
+			message("Вы выиграли "..reward)
 			Connector:give(player,reward)
 			gpu.setBackground(0x000000)
 			gpu.setForeground(0xffffff)
 			gpu.set(4,3, player..'('..Connector:get(player) ..'дюр.)')
 		else
-			localsay("Вы проиграли ")
+			message("Вы проиграли ")
 		end
 	end
 	

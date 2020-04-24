@@ -218,7 +218,7 @@ end
 function lose()
 	login = false
 	first_win =false
-	localsay("Вы проиграли!")
+	message("Вы проиграли!")
 	os.sleep(1)
 	drawDisplay()
 end
@@ -260,8 +260,8 @@ function setDefaultColor(left,top,bet)
 end
 
 function rewardPlayer(player,reward,msg)
-  localsay(msg)
-  localsay("Вы выиграли "..math_round(reward,2))
+  message(msg)
+  message("Вы выиграли "..math_round(reward,2))
   Connector:give(player,math_round(reward,2))
   os.sleep(time_sleep_end)
   login = false
@@ -312,7 +312,7 @@ while true do
 				endtime = os.time()+1640
 				startGame()
 			else
-				localsay(p..", у вас нет столько денег. Пополните счёт в ближайшем терминале.")
+				message(p..", у вас нет столько денег. Пополните счёт в ближайшем терминале.")
 			end
 		end
 	end

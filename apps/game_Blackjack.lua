@@ -86,7 +86,7 @@ function startGame()
     give_card_diller()
     if (count_cards(players_cards, true) == 21) then
         if (count_cards(diller_cards, true) == 11) then
-            localsay("Black Jack!")
+            message("Black Jack!")
             blackjack = true
             gpu.setBackground(0x00aa00)
             gpu.fill(9, 11, 26, 3, " ")
@@ -97,8 +97,8 @@ function startGame()
             gpu.fill(22, 11, 11, 1, ' ')
             gpu.set(22, 11, 'Продолжить')
         else
-            localsay("Black Jack!")
-            localsay("Вы выиграли " .. value * 1.5)
+            message("Black Jack!")
+            message("Вы выиграли " .. value * 1.5)
             Connector:give(player, value * 1.5)
             os.sleep(time_sleep_end)
             login = false
@@ -178,7 +178,7 @@ function give_card_player()
     gpu.fill(19, 19, 10, 1, ' ')
     gpu.set(19, 19, count_cards(players_cards, false))
     if count_cards(players_cards, true) > 21 then
-        localsay("Перебор, победа казино!")
+        message("Перебор, победа казино!")
         os.sleep(time_sleep_end)
         login = false
         drawDisplay()
@@ -188,7 +188,7 @@ end
 function diller_start_play()
     give_card_diller()
     if (count_cards(diller_cards, true) == 21) then
-        localsay("Black Jack, Победа казино!")
+        message("Black Jack, Победа казино!")
         os.sleep(time_sleep_end)
         login = false
         drawDisplay()
@@ -198,28 +198,28 @@ function diller_start_play()
         give_card_diller()
     end
     if count_cards(diller_cards, true) > 21 then
-        localsay("Перебор, победа игрока!")
+        message("Перебор, победа игрока!")
         Connector:give(player, value * 2)
-        localsay(player .. ", вы выиграли " .. 2 * value .. " дюрексиков")
+        message(player .. ", вы выиграли " .. 2 * value .. " дюрексиков")
         os.sleep(time_sleep_end)
         login = false
         drawDisplay()
     elseif count_cards(players_cards, true) > count_cards(diller_cards, true) then
-        localsay("Победа игрока!")
+        message("Победа игрока!")
         Connector:give(player, value * 2)
-        localsay(player .. ", вы выиграли " .. 2 * value .. " дюрексиков")
+        message(player .. ", вы выиграли " .. 2 * value .. " дюрексиков")
         os.sleep(time_sleep_end)
         login = false
         drawDisplay()
     elseif count_cards(players_cards, true) < count_cards(diller_cards, true) then
-        localsay("Победа казино!")
+        message("Победа казино!")
         os.sleep(time_sleep_end)
         login = false
         drawDisplay()
     else
-        localsay("Ничья!")
+        message("Ничья!")
         Connector:give(player, value)
-        localsay(player .. ", вы выиграли " .. value .. " дюрексиков")
+        message(player .. ", вы выиграли " .. value .. " дюрексиков")
 
         os.sleep(time_sleep_end)
         login = false
@@ -429,8 +429,8 @@ function setDefaultColor(left, top, bet)
 end
 
 function rewardPlayer(player, reward, msg)
-    localsay(msg)
-    localsay("Вы выиграли " .. reward)
+    message(msg)
+    message("Вы выиграли " .. reward)
     Connector:give(player, reward)
     os.sleep(time_sleep_end)
     login = false
@@ -456,7 +456,7 @@ while true do
             elseif (x >= 22 and y == 11 and x < 33) then
                 give_card_diller()
                 if (count_cards(diller_cards, true) == 21) then
-                    localsay("Black Jack!, победа казино!")
+                    message("Black Jack!, победа казино!")
                 else
                     rewardPlayer(player, value * 1.5, "Black Jack!")
                 end
@@ -467,7 +467,7 @@ while true do
             diller_start_play()
         elseif x >= 9 and y == 13 and x < 20 then
             if (#players_cards > 2) then
-                localsay(p .. ", удвоить можна только с двумя картами на руках.")
+                message(p .. ", удвоить можна только с двумя картами на руках.")
             elseif (Connector:pay(p, value)) then
                 gpu.setBackground(0x00aa00)
                 value = value * 2
@@ -478,7 +478,7 @@ while true do
                     diller_start_play()
                 end
             else
-                localsay(p .. ", у вас нет столько денег. Пополните счёт в ближайшем терминале.")
+                message(p .. ", у вас нет столько денег. Пополните счёт в ближайшем терминале.")
             end
         end
     elseif login == false and e == 'touch' then
@@ -505,7 +505,7 @@ while true do
                 endtime = os.time() + 1640
                 startGame()
             else
-                localsay(p .. ", у вас нет столько денег. Пополните счёт в ближайшем терминале.")
+                message(p .. ", у вас нет столько денег. Пополните счёт в ближайшем терминале.")
             end
         end
     end

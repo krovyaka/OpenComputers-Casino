@@ -31,6 +31,14 @@ casino.drawBigText = function(x, y, maxWidth, text)
     end
 end
 
+casino.takeMoney = function(money)
+    return true
+end
+
+casino.reward = function(money)
+
+end
+
 casino.setResolution = function(width, height)
     gpu.setResolution(width, height)
 end
