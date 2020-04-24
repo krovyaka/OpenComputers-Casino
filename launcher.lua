@@ -3,8 +3,8 @@
 --- DateTime: 24.04.2020 17:31
 ---
 local component = require("component")
-local internet = component.internet
 local casino = require("casino")
+local internet = component.internet
 
 local games = {
     {title = "Рулетка"},
