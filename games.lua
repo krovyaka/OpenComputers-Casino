@@ -16,7 +16,7 @@ table.insert(games, {
 table.insert(games, {
     title = "Больше-Меньше",
     file = "game_More_less.lua",
-    available = true,
+    available = false,
     image = "game_More_less.pic",
     author = "Durex77",
     description = "Описание временно недоступно"
@@ -34,7 +34,7 @@ table.insert(games, {
 table.insert(games, {
     title = "Лабиринт",
     file = "game_Labyrinth.lua",
-    available = true,
+    available = false,
     image = "game_Labyrinth.pic",
     author = "krovyaka, Durex77",
     description = "Описание временно недоступно"
@@ -43,7 +43,7 @@ table.insert(games, {
 table.insert(games, {
     title = "Сапёр",
     file = "game_Minesweeper.lua",
-    available = true,
+    available = false,
     image = "game_Minesweeper.pic",
     author = "krovyaka",
     description = "Описание временно недоступно"
@@ -52,7 +52,7 @@ table.insert(games, {
 table.insert(games, {
     title = "Видеопокер",
     file = "game_Video_poker.lua",
-    available = true,
+    available = false,
     image = "game_Video_poker.pic",
     author = "Durex77",
     description = "Описание временно недоступно"
