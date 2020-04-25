@@ -164,7 +164,7 @@ while true do
             if (fixClicks(left, top)) then
                 if (casino.takeMoney(money)) then
                     if (endBets == 0) then
-                        endBets = os.time() + 15 -- 1080
+                        endBets = os.time() + 1080
                         message("Рулетка крутится через 15 сек после первой ставки.")
                     end
                     if (left > 18) and (left < 102) and (top > 1) and (top < 13) then
