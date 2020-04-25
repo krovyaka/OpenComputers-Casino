@@ -5,6 +5,8 @@ local games
 local image
 local buffer
 
+event.shouldInterrupt = function () return false end
+
 local repository = "https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino-NoVirtual/master"
 
 local state = {
@@ -62,7 +64,7 @@ local function drawDynamic()
 
     casino.setBackground(0xFFFFFF)
     casino.writeCenter(133, 7, currentGame.title, 0x000000)
-    casino.drawBigText(102, 9, 57, currentGame.description)
+    casino.drawBigText(102, 9, (currentGame.description or " ") .. "\n \n" .. "Разработчик: " .. currentGame.author)
 
     if currentGame.available then
         casino.drawRectangleWithCenterText(51, 40, 50, 5, "Играть", 0x431148, 0xffffff)
@@ -87,7 +89,7 @@ initLauncher()
 drawStatic()
 drawDynamic()
 
-for i = 1, 5 do
+while true do
     local e, _, x, y = event.pull("touch")
     if (e == "touch") then
         -- Left menu buttons
