@@ -47,6 +47,17 @@ table.insert(games, {
 })
 
 table.insert(games, {
+    title = "Видеопокер",
+    file = "game_Video_poker.lua",
+    available = true,
+    image = "game_Video_poker.pic",
+    author = "Durex77",
+    description = "Видеопокер — игра казино, основанная на правилах\n"..
+            "пятикарточного покера с обменом. Игра ведется на\n"..
+            "компьютеризированной консоли с экраном или через интернет"
+})
+
+table.insert(games, {
     title = "Больше-Меньше",
     file = "game_More_less.lua",
     available = false,
@@ -70,15 +81,6 @@ table.insert(games, {
     available = false,
     image = "game_Minesweeper.pic",
     author = "krovyaka",
-    description = "Описание временно недоступно"
-})
-
-table.insert(games, {
-    title = "Видеопокер",
-    file = "game_Video_poker.lua",
-    available = false,
-    image = "game_Video_poker.pic",
-    author = "Durex77",
     description = "Описание временно недоступно"
 })
 
