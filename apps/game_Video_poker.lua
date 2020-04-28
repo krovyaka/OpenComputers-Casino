@@ -490,10 +490,10 @@ local function rewardPlayer(reward)
     end
 end
 
-local function exit()
-    login = false
-    game = false
-    drawDisplay()
+local function exit() -- TODO: Remove
+    --login = false
+    --game = false
+    --drawDisplay()
 end
 
 local function updateCards()
