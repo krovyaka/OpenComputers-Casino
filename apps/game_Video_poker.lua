@@ -10,7 +10,6 @@ local value = 1
 local game = false
 local card_holds = { false, false, false, false, false }
 local players_cards
-local end_time
 
 local consoleLines = {}
 for i = 1, 13 do
@@ -74,28 +73,25 @@ local function drawGame()
     for i = 1, 5 do
         gpu.set(33, 11 + i, tostring(i))
     end
-    gpu.setBackground(0xff0000)
-    gpu.fill(30, 2, 8, 3, ' ')
-    gpu.set(31, 3, 'В меню')
     gpu.setBackground(0x00ff00)
     gpu.fill(30, 17, 8, 3, ' ')
     gpu.set(31, 18, 'Начать')
 
     --Рисую картинку
     gpu.setBackground(0xffffff)
-    gpu.fill(34, 5, 1, 1, ' ')
-    gpu.fill(33, 6, 3, 1, ' ')
-    gpu.fill(32, 7, 5, 1, ' ')
-    gpu.fill(31, 8, 7, 1, ' ')
-    gpu.fill(34, 9, 1, 1, ' ')
-    gpu.fill(33, 10, 3, 1, ' ')
+    gpu.fill(34, 3, 1, 1, ' ')
+    gpu.fill(33, 4, 3, 1, ' ')
+    gpu.fill(32, 5, 5, 1, ' ')
+    gpu.fill(31, 6, 7, 1, ' ')
+    gpu.fill(34, 7, 1, 1, ' ')
+    gpu.fill(33, 8, 3, 1, ' ')
     gpu.setBackground(0xc6c6c6)
-    gpu.set(33, 5, ' ')
-    gpu.set(32, 6, ' ')
-    gpu.set(31, 7, ' ')
-    gpu.set(30, 8, ' ')
-    gpu.set(33, 9, ' ')
-    gpu.set(32, 10, ' ')
+    gpu.set(33, 3, ' ')
+    gpu.set(32, 4, ' ')
+    gpu.set(31, 5, ' ')
+    gpu.set(30, 6, ' ')
+    gpu.set(33, 7, ' ')
+    gpu.set(32, 8, ' ')
 end
 
 local function getDivideBy4(number)
@@ -214,15 +210,6 @@ local function isFlush(cards)
         end
     end
     return true
-end
-
-local function isExist(cards, card, suit)
-    for i = 1, #cards do
-        if (cards[i].card == card and cards[i].suit == suit) then
-            return true
-        end
-    end
-    return false
 end
 
 local function cardPower(card)
@@ -443,42 +430,6 @@ local function drawHeld(x)
     end
 end
 
-local function drawDisplay()
-    gpu.setBackground(0xe0e0e0)
-    term.clear()
-    drawRightMenu()
-    gpu.setBackground(0x000000)
-    gpu.fill(3, 2, 17, 8, ' ')
-
-    local x = 8
-    local y = 4
-    gpu.setBackground(0xffffff)
-    gpu.fill(x, y - 1, 2, 1, ' ')
-    gpu.fill(x - 1, y, 4, 1, ' ')
-    gpu.fill(x - 2, y + 1, 6, 1, ' ')
-    gpu.fill(x - 3, y + 2, 8, 1, ' ')
-    gpu.fill(x, y + 3, 2, 1, ' ')
-    gpu.fill(x - 1, y + 4, 4, 1, ' ')
-    gpu.setBackground(0xc6c6c6)
-    gpu.set(x - 1, y - 1, ' ')
-    gpu.set(x - 2, y, ' ')
-    gpu.set(x - 3, y + 1, ' ')
-    gpu.set(x - 4, y + 2, ' ')
-    gpu.set(x - 1, y + 3, ' ')
-    gpu.set(x - 2, y + 4, ' ')
-
-    gpu.fill(22, 2, 17, 8, ' ')
-    gpu.fill(3, 11, 36, 9, ' ')
-    gpu.setForeground(0x000000)
-    gpu.set(27, 5, 'Начать')
-    gpu.set(28, 6, 'игру')
-    gpu.setForeground(0xffffff)
-    gpu.setBackground(0x000000)
-    gpu.set(12, 3, "Video")
-    gpu.set(13, 4, "Poker")
-    value = 1
-end
-
 local function rewardPlayer(reward)
     if reward and reward > 0 then
         message("Вы выиграли " .. reward)
@@ -488,12 +439,6 @@ local function rewardPlayer(reward)
     else
         message("Вы проиграли ")
     end
-end
-
-local function exit() -- TODO: Remove
-    --login = false
-    --game = false
-    --drawDisplay()
 end
 
 local function updateCards()
@@ -511,24 +456,19 @@ local function updateCards()
 end
 
 gpu.setResolution(70, 20)
-drawDisplay()
-end_time = 0
+logging()
 while true do
-    :: continue ::
     local e, _, x, y, _, p = event.pull(3, "touch")
-    if not e or login and os.time() > end_time then
-        exit()
-        goto continue
-    end
-    if login then
-        end_time = math.huge -- TODO: Remove welcome menu
+    if e then
         if (game == false) then
-            if x >= 30 and y >= 17 and x <= 37 and y <= 19 and casino.takeMoney(value) then
-                gpu.setBackground(0x000000)
-                gpu.setForeground(0xffffff)
-                startGame()
-            elseif (x >= 30 and y >= 2 and x <= 37 and y <= 4) then
-                exit()
+            if x >= 30 and y >= 17 and x <= 37 and y <= 19 then
+                if (casino.takeMoney(value)) then
+                    gpu.setBackground(0x000000)
+                    gpu.setForeground(0xffffff)
+                    startGame()
+                else
+                    message("У Вас недостаточно средств.")
+                end
             elseif (x >= 30 and y >= 12 and x <= 37 and y <= 16) then
                 if (y == 12) then
                     drawRewards(1, 0)
@@ -562,15 +502,9 @@ while true do
                 drawHeld(4)
             end
         end
-    elseif login == false and e == 'touch' then
-        if (x >= 22 and x <= 38 and y >= 2 and y <= 9) then
-            login = true
-            end_time = math.huge
-            logging()
-        end
     end
 
-    if x >= 41 and x <= 69 and y >= 17 and y <= 19 then
+    if e and x >= 41 and x <= 69 and y >= 17 and y <= 19 then
         if game then
             message("Сначала закончите игру")
         else

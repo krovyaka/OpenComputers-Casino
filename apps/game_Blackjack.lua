@@ -4,7 +4,7 @@ local gpu = component.gpu
 local event = require("event")
 local casino = require("casino")
 
-local login, blackjack, player, value, players_cards, dialer_cards, time_sleep, time_sleep_end = false, false, 'p', 1, {}, {}, 0.2, 1.5
+local login, blackjack, player, value, players_cards, dialer_cards, time_sleep, time_sleep_end = false, false, 'p', 1, {}, {}, 0.2, 3
 
 local consoleLines = {}
 for i = 1, 13 do
@@ -474,16 +474,8 @@ end
 
 gpu.setResolution(70, 20)
 drawDisplay()
-local endTime = 0
 while true do
-    :: continue ::
     local e, _, x, y, _, p = event.pull(3, "touch")
-    if (login) and os.time() > endTime then
-        login = false
-        blackjack = false
-        drawDisplay()
-        goto continue
-    end
     if e and login and p == player then
         if blackjack then
             if (x >= 9 and y == 11 and x <= 19) then
@@ -541,7 +533,6 @@ while true do
             if (casino.takeMoney(value)) then
                 player = p
                 login = true
-                endTime = os.time() + 1640
                 startGame()
             else
                 message("У Вас недостаточно средств.")
