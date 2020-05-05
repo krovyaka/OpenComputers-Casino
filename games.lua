@@ -63,7 +63,7 @@ table.insert(games, {
 table.insert(games, {
     title = "Больше-Меньше",
     file = "game_More_less.lua",
-    available = false,
+    available = true,
     image = "game_More_less.pic",
     author = "Durex77",
     description = "Карточная игра казино, суть которой в том, чтобы угадать,\n" ..
