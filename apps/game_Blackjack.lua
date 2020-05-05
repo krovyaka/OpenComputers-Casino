@@ -12,7 +12,7 @@ for i = 1, 13 do
 end
 
 local function drawRightMenu()
-    gpu.setBackground(0x990000)
+    gpu.setBackground(login and 0x613C3C or 0x990000)
     gpu.setForeground(0xFFFFFF)
     gpu.fill(41, 17, 28, 3, " ")
     gpu.set(52, 18, "Выход")
@@ -510,7 +510,7 @@ while true do
         elseif x >= 41 and x <= 69 and y >= 17 and y <= 19 then
             message("Сначала закончите игру.")
         end
-    elseif login == false and e == 'touch' then
+    elseif e and not login then
         if x == 20 and y == 5 then
             value = setDefaultColor(20, 5, 1)
         elseif x == 20 and y == 7 then
