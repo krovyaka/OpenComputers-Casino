@@ -48,6 +48,7 @@ casino.drawBigText = function(x, y, text)
 end
 
 casino.reward = function(money)
+    money = math.floor(money)
     while money > 0 do
         local executed, g = pcall(function()
             return meInterface.exportItem(MONEY_ITEM, "UP", money < 64 and money or 64).size

@@ -79,21 +79,18 @@ table.insert(games, {
 })
 
 table.insert(games, {
-    title = "Лабиринт",
-    file = "game_Labyrinth.lua",
-    available = false,
-    image = "game_Labyrinth.pic",
-    author = "krovyaka, Durex77",
-    description = "Описание временно недоступно"
-})
-
-table.insert(games, {
     title = "Сапёр",
     file = "game_Minesweeper.lua",
-    available = false,
+    available = true,
     image = "game_Minesweeper.pic",
     author = "krovyaka",
-    description = "Описание временно недоступно"
+    description = "Начинайте игру и ищите поля без мин. Если 3 раза подряд\n" ..
+            "не наткнулись на поле с миной, то вы победили. Всего в\n" ..
+            "игре 24 поля, из которых 5 заминированы.\n" ..
+            "Победа в игре удваивает ставку.\n \n" ..
+            "Перед игрой убедитесь, что у Вас будет достаточно\n" ..
+            "места для получения выигрыша, а также, что сумма выигрыша\n" ..
+            "не превысит количество валюты на счету казино."
 })
 
 return games
