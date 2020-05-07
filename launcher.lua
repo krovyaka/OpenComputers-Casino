@@ -9,7 +9,7 @@ event.shouldInterrupt = function()
     return false
 end
 
-local repository = "https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino-NoVirtual/master"
+repository = "https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino-NoVirtual/master"
 
 local state = {
     title = "Приветствуем вас, Котики ^_^. Эксклюзивно на /warp lol", -- TODO: Move to the config

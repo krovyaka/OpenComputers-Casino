@@ -17,8 +17,10 @@ end
 local Symbol = {}
 function Symbol:new()
     local obj = {}
+    obj.name = nil
     obj.sound = nil
     obj.image = nil
+    obj.value = nil
 
     setmetatable(obj, self)
     self.__index = self;
@@ -35,6 +37,10 @@ function Machine:new()
         return shuffle(obj.symbols)
     end
 
+    function obj.randomSymbol()
+        return obj.symbols[math.random(1, #obj.symbols)]
+    end
+
     obj.spin = setmetatable(obj, self)
     self.__index = self;
     return obj
@@ -42,5 +48,5 @@ end
 
 local slot_machine = {}
 slot_machine.Symbol = Symbol
-slot_machine.Slot = Slot
+slot_machine.Machine = Machine
 return slot_machine
