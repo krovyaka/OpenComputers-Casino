@@ -141,6 +141,7 @@ while true do
             if new_bet ~= bet then
                 bet = new_bet
                 drawRightMenu()
+                drawRewards()
             end
         end
         -- Play button
