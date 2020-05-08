@@ -127,7 +127,10 @@ initStaticData()
 drawStatic()
 drawRightMenu()
 drawRewards()
-roll()
+for j = 1, 3 do
+    buffer.drawImage(-10 + j * 17, 4, machine.symbols[#machine.symbols].image)
+end
+buffer.drawChanges()
 while true do
     local _, _, x, y = event.pull("touch")
     -- Right menu buttons
