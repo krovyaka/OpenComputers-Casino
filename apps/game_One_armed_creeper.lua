@@ -155,7 +155,7 @@ while true do
                     message("Вы проиграли")
                 end
             else
-                message("У Вас недостаточно средств")
+                message("Недостаточно средств")
             end
         end
         -- Exit button
