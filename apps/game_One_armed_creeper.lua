@@ -1,6 +1,6 @@
 local sm = require("slot_machine")
 local image = require("image")
-local buffer = require("DoubleBuffering")
+local buffer = require("doubleBuffering")
 local shell = require("shell")
 local casino = require("casino")
 local event = require("event")
