@@ -18,9 +18,10 @@ local Symbol = {}
 function Symbol:new()
     local obj = {}
     obj.name = nil
+    obj.nameColor = nil
     obj.sound = nil
     obj.image = nil
-    obj.value = nil
+    obj.ratio = nil
 
     setmetatable(obj, self)
     self.__index = self;
