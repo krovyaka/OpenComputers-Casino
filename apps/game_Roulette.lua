@@ -1,40 +1,34 @@
 local component = require("component")
-local gpu = component.gpu
 local term = require("term")
 local event = require("event")
 local casino = require("casino")
+local buffer = require("doubleBuffering")
+
+local values = { [0] = 'z', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'r' }
+local wheel = { 0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26, 0, 32, 15, 19, 4, 21, 2, 25, 17 }
+local red = { 1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36 }
+local black = { 2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35 }
+local bets = {}
 
 local consoleLines = { "", "", "", "", "", "", "", "", "" }
 
 local function message(msg)
     table.remove(consoleLines, 1)
     table.insert(consoleLines, msg)
-    gpu.setForeground(0xffffff)
-    gpu.setBackground(0x002f15)
-    gpu.fill(3, 23, 71, 9, ' ')
+    buffer.drawRectangle(3, 23, 71, 9, 0x002f15, 0xffffff, " ")
     for i = 1, #consoleLines do
-        gpu.set(4, 32 - i, consoleLines[i])
+        buffer.drawText(4, 32 - i, 0xffffff, consoleLines[i])
     end
+    buffer.drawChanges()
 end
 
-local values = { [0] = 'z', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'b', 'r', 'b', 'r', 'b', 'r', 'b', 'r' }
-local wheel = { 0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26, 0, 32, 15, 19, 4, 21, 2, 25, 17 }
-local red = { 1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36 }
-local black = { 2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35 }
-
-local function drawNumber(left, top, number)
-    if (values[number] == 'r') then
-        gpu.setBackground(0xff0000)
-    elseif (values[number] == 'b') then
-        gpu.setBackground(0x000000)
-    else
-        gpu.setBackground(0x00ff00)
-    end
-    gpu.fill(left, top, 6, 3, ' ')
-    gpu.set(left + 2, top + 1, tostring(number))
+local function drawNumber(left, top, number) -- requires redraw changes
+    local background = values[number] == 'r' and 0xff0000 or values[number] == 'b' and 0x000000 or 0x00ff00
+    buffer.drawRectangle(left, top, 6, 3, background, 0xffffff, " ")
+    buffer.drawText(left + 2, top + 1, 0xffffff, tostring(number))
 end
 
-local function getColor(number)
+local function getNumberPostfix(number)
     if (number == 0) then
         return ""
     end
@@ -46,58 +40,49 @@ local function getColor(number)
     return "(чёрное)"
 end
 
-gpu.setResolution(112, 32)
-gpu.setBackground(0xffffff)
-term.clear()
-gpu.setForeground(0x000000)
-gpu.set(103, 14, "Ставки:")
-gpu.set(103, 15, "ЛКМ 1$")
-gpu.set(103, 16, "ПКМ 10$")
-gpu.setForeground(0xffffff)
-gpu.setBackground(0x00ff00)
-gpu.fill(13, 2, 5, 11, ' ')
-gpu.set(15, 7, "0")
-for i = 1, 36 do
-    drawNumber(19 + math.floor((i - 1) / 3) * 7, 2 + ((3 - i) % 3 * 4), i)
+local function drawStatic()
+    buffer.setResolution(112, 32)
+    buffer.clear(0xffffff)
+    buffer.drawText(103, 14, 0x000000, "Ставки:")
+    buffer.drawText(103, 15, 0x000000, "ЛКМ 1$")
+    buffer.drawText(103, 16, 0x000000, "ПКМ 10$")
+    buffer.drawRectangle(13, 2, 5, 11, 0x34a513, 0xffffff, ' ')
+    buffer.drawText(15, 7, 0xffffff, "0")
+    for i = 1, 36 do
+        drawNumber(19 + math.floor((i - 1) / 3) * 7, 2 + ((3 - i) % 3 * 4), i)
+    end
+    buffer.drawRectangle(103, 2, 9, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(103, 6, 9, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(103, 10, 9, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(19, 14, 27, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(47, 14, 27, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(75, 14, 27, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(19, 18, 13, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(33, 18, 13, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(75, 18, 13, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(89, 18, 13, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawText(106, 3, 0xffffff, "2к1")
+    buffer.drawText(106, 7, 0xffffff, "2к1")
+    buffer.drawText(106, 11, 0xffffff, "2к1")
+    buffer.drawText(28, 15, 0xffffff, "первая 12")
+    buffer.drawText(56, 15, 0xffffff, "вторая 12")
+    buffer.drawText(84, 15, 0xffffff, "третья 12")
+    buffer.drawText(22, 19, 0xffffff, "1 до 18")
+    buffer.drawText(38, 19, 0xffffff, "Чёт")
+    buffer.drawText(79, 19, 0xffffff, "Нечёт")
+    buffer.drawText(91, 19, 0xffffff, "19 до 36")
+    buffer.drawRectangle(75, 29, 36, 3, 0xff0000, 0xffffff, ' ')
+    buffer.drawRectangle(47, 18, 13, 3, 0xff0000, 0xffffff, ' ')
+    buffer.drawRectangle(3, 2, 8, 19, 0xffb109, 0xffffff, ' ')
+    buffer.drawRectangle(3, 9, 8, 5, 0xffda54, 0xffffff, ' ')
+    buffer.drawRectangle(61, 18, 13, 3, 0x000000, 0xffffff, ' ')
+    buffer.drawRectangle(3, 22, 71, 10, 0xaaaaaa, 0xffffff, ' ')
+    buffer.drawText(90, 30, 0xffffff, "Выход")
+    buffer.drawText(50, 19, 0xffffff, "Красное")
+    buffer.drawText(64, 19, 0xffffff, "Чёрное")
+    buffer.drawText(4, 22, 0x000000, "Вывод:")
+    buffer.drawChanges()
 end
-gpu.setBackground(0x34a513)
-gpu.fill(103, 2, 9, 3, ' ')
-gpu.fill(103, 6, 9, 3, ' ')
-gpu.fill(103, 10, 9, 3, ' ')
-gpu.set(106, 3, "2к1")
-gpu.set(106, 7, "2к1")
-gpu.set(106, 11, "2к1")
-gpu.fill(19, 14, 27, 3, ' ')
-gpu.fill(47, 14, 27, 3, ' ')
-gpu.fill(75, 14, 27, 3, ' ')
-gpu.set(28, 15, "первая 12")
-gpu.set(56, 15, "вторая 12")
-gpu.set(84, 15, "третья 12")
-gpu.fill(19, 18, 13, 3, ' ')
-gpu.fill(33, 18, 13, 3, ' ')
-gpu.fill(75, 18, 13, 3, ' ')
-gpu.fill(89, 18, 13, 3, ' ')
-gpu.set(22, 19, "1 до 18")
-gpu.set(38, 19, "Чёт")
-gpu.set(79, 19, "Нечёт")
-gpu.set(91, 19, "19 до 36")
-gpu.setBackground(0xff0000)
-gpu.fill(75, 29, 36, 3, ' ')
-gpu.set(90, 30, "Выход")
-gpu.fill(47, 18, 13, 3, ' ')
-gpu.set(50, 19, "Красное")
-gpu.setBackground(0xffb109)
-gpu.fill(3, 2, 8, 19, ' ')
-gpu.setBackground(0xffda54)
-gpu.fill(3, 9, 8, 5, ' ')
-gpu.setBackground(0x000000)
-gpu.fill(61, 18, 13, 3, ' ')
-gpu.set(64, 19, "Чёрное")
-gpu.setBackground(0x002f15)
-gpu.fill(3, 22, 71, 10, ' ')
-gpu.setForeground(0xaaaaaa)
-gpu.set(4, 22, "Вывод:")
-gpu.setForeground(0xffffff)
 
 local function Roll()
     local current = math.random(1, 35)
@@ -111,6 +96,7 @@ local function Roll()
         drawNumber(4, 10, wheel[current + 2])
         drawNumber(4, 14, wheel[current + 1])
         drawNumber(4, 18, wheel[current])
+        buffer.drawChanges()
         os.sleep(i / 140)
     end
     return wheel[current + 2]
@@ -123,7 +109,6 @@ local function getNumberClick(left, top)
     return (math.floor((left - 18) / 7) * 3) + math.floor(4 - (top - 1) / 4)
 end
 
-local bets = {}
 local function resetBets()
     bets = {}
     for i = 0, 36 do
@@ -145,12 +130,17 @@ local function placeBetByTable(t, money)
     end
 end
 
-local function fixClicks(left, top)
-    return not ((left < 13) or (top < 2) or (left > 111) or (top > 20) or (left < 19 and top > 12) or (left == 18) or (left == 46) or (left == 102) or (top == 12) or (top == 17) or (((left > 18) and (left < 102) and (top > 1) and (top < 13)) and getNumberClick(left, top) == 0) or (top > 17 and top < 21 and (left == 32 or left == 46 or left == 60 or left == 74 or left == 88)) or (left > 101 and top > 12) or (left > 102 and (top == 5 or top == 9)))
+local function fixClicks(left, top) -- lol watta hell is this?
+    return not (
+        (left < 13) or (top < 2) or (left > 111) or (top > 20) or (left < 19 and top > 12) or (left == 18) or (left == 46) or (left == 102) or 
+        (top == 12) or (top == 17) or (((left > 18) and (left < 102) and (top > 1) and (top < 13)) and getNumberClick(left, top) == 0) or 
+        (top > 17 and top < 21 and (left == 32 or left == 46 or left == 60 or left == 74 or left == 88)) or (left > 101 and top > 12) or 
+        (left > 102 and (top == 5 or top == 9)))
 end
 
 local endBets = 0
-
+drawStatic()
+message("")
 while true do
     resetBets()
     endBets = 0
@@ -257,7 +247,7 @@ while true do
         return sum / 36
     end)())
     local out = Roll()
-    message("Выпало число " .. out .. " " .. getColor(out))
+    message("Выпало число " .. out .. " " .. getNumberPostfix(out))
     if bets[out] then
         casino.reward(bets[out])
         message("Вы выиграли " .. bets[out])
