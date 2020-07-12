@@ -94,7 +94,7 @@ table.insert(games, {
 })
 
 table.insert(games, {
-    title = "Однорукий Крипер (NEW)",
+    title = "Однорукий Крипер",
     file = "game_One_armed_creeper.lua",
     available = true,
     image = "game_One_armed_creeper.pic",
