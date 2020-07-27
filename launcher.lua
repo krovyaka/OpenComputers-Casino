@@ -42,7 +42,7 @@ local libs = {
         path = "/lib/doubleBuffering.lua"
     },
     {
-        url = repository .. "/games.lua",
+        url = repository .. "/config/games.lua",
         path = "/lib/games.lua"
     }
 }
@@ -56,8 +56,16 @@ local function isAdmin(player)
     return false
 end
 
+local function drawRectangleWithCenterText(x, y, width, height, text, bgcolor, fgcolor)
+    local text_x = x - unicode.len(text) / 2
+    local text_y = height / 2 + y
+    buffer.drawRectangle(x, y, width, height, bgcolor)
+    buffer.writeCenter(width / 2 + x, height / 2 + y, text, fgcolor)
+end
+
+
 local function drawStatic()
-    casino.setResolution(160, 50)
+    buffer.setResolution(160, 50)
     casino.drawRectangleWithCenterText(1, 1, 160, 5, state.title, 0x431148, 0xFFFFFF)
 
     if (state.devMode) then
