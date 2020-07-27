@@ -5,7 +5,7 @@ local filesystem = require("filesystem")
 local chest = component.chest
 local meInterface = component.me_interface
 
-local MONEY_ITEM = { id = "customnpcs:npcMoney" }
+local MONEY_ITEM = { id = "customnpcs:npcMoney", name="Деньги" }
 local chestSize = chest.getInventorySize()
 
 casino.splitString = function(inputStr, sep)
@@ -39,7 +39,7 @@ casino.takeMoney = function(money)
     end
     if sum < money then
         casino.reward(sum)
-        return false
+        return false, "Недостаточно средств."
     end
     return true
 end
@@ -48,6 +48,10 @@ casino.downloadFile = function(url, saveTo, forceRewrite)
     if forceRewrite or not filesystem.exists(saveTo) then
         shell.execute("wget -fq " .. url .. " " .. saveTo)
     end
+end
+
+casino.setCurrency = function(id, name)
+    MONEY_ITEM = {id = id, name = name}
 end
 
 return casino

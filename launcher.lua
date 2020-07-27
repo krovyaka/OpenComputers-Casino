@@ -1,6 +1,7 @@
 local casino = require("casino")
 local event = require("event")
 local shell = require("shell")
+local unicode = require("unicode")
 local games
 local image
 local buffer
@@ -56,57 +57,69 @@ local function isAdmin(player)
     return false
 end
 
-local function drawRectangleWithCenterText(x, y, width, height, text, bgcolor, fgcolor)
-    local text_x = x - unicode.len(text) / 2
-    local text_y = height / 2 + y
-    buffer.drawRectangle(x, y, width, height, bgcolor)
-    buffer.writeCenter(width / 2 + x, height / 2 + y, text, fgcolor)
+local function writeCenter(x, y, text, color)
+    buffer.drawText(math.floor(x - unicode.len(text) / 2), math.floor(y), color, text)
 end
 
+local function drawRectangleWithCenterText(x, y, width, height, text, bgColor, fgColor)
+    buffer.drawRectangle(x, y, width, height, bgColor, 0, " ")
+    writeCenter(width / 2 + x, height / 2 + y, text, fgColor)
+end
+
+local function drawBigText(x, y, text)
+    if not text then
+        return
+    end
+    local lines = casino.splitString(text, "\n")
+    for i = 0, #lines - 1 do
+        buffer.drawText(x, y + i, 0x000000, lines[i + 1])
+    end
+end
 
 local function drawStatic()
     buffer.setResolution(160, 50)
-    casino.drawRectangleWithCenterText(1, 1, 160, 5, state.title, 0x431148, 0xFFFFFF)
+    drawRectangleWithCenterText(1, 1, 160, 5, state.title, 0x431148, 0xFFFFFF)
 
     if (state.devMode) then
-        casino.writeCenter(158, 1, "{dev}", 0xE700FF)
-        casino.writeCenter(160, 2, "X", 0xFF0000)
+        writeCenter(158, 1, "{dev}", 0xE700FF)
+        writeCenter(160, 2, "X", 0xFF0000)
     else
-        casino.writeCenter(158, 1, "{dev}", 0x78517C)
+        writeCenter(158, 1, "{dev}", 0x78517C)
     end
-
-    casino.drawRectangle(1, 6, 48, 45, 0xF2F2F2)
+    buffer.drawRectangle(1, 6, 48, 45, 0xF2F2F2, 0, " ")
+    buffer.drawChanges()
 end
 
 local function drawDynamic()
     local currentGame = games[state.selection]
     local imgPath = "/home/images/games_logo/" .. currentGame.image
-    casino.drawRectangle(49, 6, 112, 45, 0xFFFFFF)
+    buffer.drawRectangle(49, 6, 112, 45, 0xFFFFFF, 0, " ")
     casino.downloadFile(repository .. "/resources/images/games_logo/" .. currentGame.image, imgPath)
-    buffer.flush()
     buffer.drawImage(51, 7, image.load(imgPath))  -- 50х32
-    buffer.drawChanges()
-    casino.setBackground(0xFFFFFF)
-    casino.writeCenter(133, 7, currentGame.title, 0x000000)
-    casino.drawBigText(102, 9, (currentGame.description or " ") .. "\n \n" .. "Разработчик: " .. currentGame.author)
+    writeCenter(133, 7, currentGame.title, 0x000000)
+    drawBigText(102, 9, (currentGame.description or " ") .. "\n \n" .. "Разработчик: " .. currentGame.author)
 
     for i = 1, #games do
         if (currentGame == games[i]) then
-            casino.drawRectangleWithCenterText(2, 3 + i * 4, 46, 3, games[i].title, 0xA890AA, 0x000000)
+            drawRectangleWithCenterText(2, 3 + i * 4, 46, 3, games[i].title, 0xA890AA, 0x000000)
         else
-            casino.drawRectangleWithCenterText(2, 3 + i * 4, 46, 3, games[i].title, 0xE3E3E3, 0x000000)
+            drawRectangleWithCenterText(2, 3 + i * 4, 46, 3, games[i].title, 0xE3E3E3, 0x000000)
         end
     end
 
+    drawRectangleWithCenterText(2, 46, 46, 1, "Текущая валюта", 0xbbbbbb, 0x000000)
+    buffer.drawRectangle(2, 47, 46, 3, 0xE3E3E3, 0, " ")
+
     if (state.devMode) then
-        casino.drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x431148, 0xffffff)
+        drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x431148, 0xffffff)
     else
         if currentGame.available then
-            casino.drawRectangleWithCenterText(51, 40, 50, 5, "Играть", 0x431148, 0xffffff)
+            drawRectangleWithCenterText(51, 40, 50, 5, "Играть", 0x431148, 0xffffff)
         else
-            casino.drawRectangleWithCenterText(51, 40, 50, 5, "Временно недоступно", 0x433b44, 0xffffff)
+            drawRectangleWithCenterText(51, 40, 50, 5, "Временно недоступно", 0x433b44, 0xffffff)
         end
     end
+    buffer.drawChanges()
 end
 
 local function initLauncher()
@@ -122,17 +135,18 @@ local function initLauncher()
 end
 
 initLauncher()
+buffer.flush()
 drawStatic()
 drawDynamic()
 
 while true do
     :: continue ::
     local e, _, x, y, _, p = event.pull("touch")
-    if (e == "touch") then
-        if state.devMode then
-            if not isAdmin(p) then
-                goto continue
-            end
+    drawRectangleWithCenterText(1, 1, 100, 3, x .. " " .. y, 0, 0xffffff)
+    buffer.drawChanges()
+    if false and (e == "touch") then
+        if state.devMode and not isAdmin(p) then
+            goto continue
         end
 
         -- Left menu buttons
@@ -148,10 +162,11 @@ while true do
         if (x >= 51 and y >= 40 and x <= 100 and y <= 44) then
             local currentGame = games[state.selection]
             if state.devMode then
-                casino.drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x5B5B5B, 0xffffff)
+                drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x5B5B5B, 0xffffff)
+                buffer.drawChanges()
                 casino.downloadFile(repository .. "/resources/images/games_logo/" .. currentGame.image, "/home/images/games_logo/" .. currentGame.image, true)
                 casino.downloadFile(repository .. "/apps/" .. currentGame.file, "/home/apps/" .. currentGame.file, true)
-                casino.drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x431148, 0xffffff)
+                drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x431148, 0xffffff)
                 drawDynamic()
             else
                 if currentGame.available then
