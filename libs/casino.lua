@@ -5,7 +5,7 @@ local filesystem = require("filesystem")
 local chest = component.chest
 local meInterface = component.me_interface
 
-local MONEY_ITEM = { id = "customnpcs:npcMoney", name="Деньги" }
+local MONEY_ITEM = { id = "customnpcs:npcMoney", name="Деньги", image = "iron_ingot.pic" }
 local chestSize = chest.getInventorySize()
 
 casino.splitString = function(inputStr, sep)
@@ -50,8 +50,12 @@ casino.downloadFile = function(url, saveTo, forceRewrite)
     end
 end
 
-casino.setCurrency = function(id, name)
-    MONEY_ITEM = {id = id, name = name}
+casino.setCurrency = function(currency)
+    MONEY_ITEM = currency
+end
+
+casino.getCurrency = function()
+    return MONEY_ITEM
 end
 
 return casino

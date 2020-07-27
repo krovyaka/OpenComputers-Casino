@@ -53,7 +53,7 @@ local function initStaticData()
     for i = 1, #pre_symbols do
         local symbol = sm.Symbol:new()
         local imgPath = imagesFolder .. pre_symbols[i][1] .. ".pic"
-        local downloadUrl = repository .. "/resources/images/one_armed_creeper/" .. pre_symbols[i][1] .. ".pic"
+        local downloadUrl = REPOSITORY .. "/resources/images/one_armed_creeper/" .. pre_symbols[i][1] .. ".pic"
         casino.downloadFile(downloadUrl, imgPath)
         symbol.image = image.load(imgPath)
         symbol.name = pre_symbols[i][3]
