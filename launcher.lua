@@ -120,13 +120,18 @@ local function drawDynamic()
     local currency = casino.getCurrency()
     local currencyImgFolder = "/home/images/currencies/"
     if state.currencyDropdown then
-
+        for i = 1, #currencies do
+            local y = 43 - 4 * (#currencies - i)
+            local img = currencies[i].image
+            casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. img, currencyImgFolder .. img)
+            buffer.drawImage(2, y, currencyImgFolder .. img)
+        end
     else
         drawRectangleWithCenterText(2, 46, 46, 1, "Текущая валюта", 0x431148, 0xFFFFFF)
     end
-    buffer.drawRectangle(49, 6, 112, 45, 0xFFFFFF, 0, " ")
+    buffer.drawRectangle(2, 47, 46, 3, 0xE3E3E3, 0, " ")
     casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. currency.image, currencyImgFolder .. currency.image)
-    buffer.drawImage(51, 7, image.load(currencyImgFolder .. currency.image))  -- 6x3
+    buffer.drawImage(2, 47, image.load(currencyImgFolder .. currency.image))  -- 6x3
 
     if (state.devMode) then
         drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x431148, 0xffffff)
@@ -151,6 +156,7 @@ local function initLauncher()
     currencies = require("currencies")
     image = require("image")
     buffer = require("doubleBuffering")
+    casino.setCurrency(currencies[1])
 end
 
 initLauncher()
@@ -166,6 +172,15 @@ while true do
     if false and (e == "touch") then
         if state.devMode and not isAdmin(p) then
             goto continue
+        end
+
+        -- Currency
+        if state.currencyDropdown then
+            state.currencyDropdown = false
+            drawDynamic()
+        elseif x >= 2 and y >= 46 and x <= 92 and y <= 50 then
+            state.currencyDropdown = true
+            drawDynamic()
         end
 
         -- Left menu buttons

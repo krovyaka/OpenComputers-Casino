@@ -5,7 +5,13 @@ local filesystem = require("filesystem")
 local chest = component.chest
 local meInterface = component.me_interface
 
-local MONEY_ITEM = { id = "customnpcs:npcMoney", name="Деньги", image = "iron_ingot.pic" }
+local MONEY_ITEM = {
+    name = nil,
+    image = nil,
+    id = nil,
+    dmg = nil
+}
+
 local chestSize = chest.getInventorySize()
 
 casino.splitString = function(inputStr, sep)
