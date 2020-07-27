@@ -104,6 +104,7 @@ local function drawDynamic()
     local currentGame = games[state.selection]
     local gameImgPath = "/home/images/games_logo/" .. currentGame.image
     buffer.drawRectangle(49, 6, 112, 45, 0xFFFFFF, 0, " ")
+    buffer.drawRectangle(1, 6, 48, 45, 0xF2F2F2, 0, " ")
     casino.downloadFile(REPOSITORY .. "/resources/images/games_logo/" .. currentGame.image, gameImgPath)
     buffer.drawImage(51, 7, image.load(gameImgPath))  -- 50х32
     writeCenter(133, 7, currentGame.title, 0x000000)
@@ -124,11 +125,10 @@ local function drawDynamic()
             local y = 43 - 4 * (#currencies - i)
             local img = currencies[i].image
             casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. img, currencyImgFolder .. img)
-            buffer.drawImage(2, y, currencyImgFolder .. img)
+            buffer.drawImage(2, y, image.load(currencyImgFolder .. img))
         end
-    else
-        drawRectangleWithCenterText(2, 46, 46, 1, "Текущая валюта", 0x431148, 0xFFFFFF)
     end
+    drawRectangleWithCenterText(2, 46, 46, 1, "Текущая валюта", 0x431148, 0xFFFFFF)
     buffer.drawRectangle(2, 47, 46, 3, 0xE3E3E3, 0, " ")
     casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. currency.image, currencyImgFolder .. currency.image)
     buffer.drawImage(2, 47, image.load(currencyImgFolder .. currency.image))  -- 6x3
@@ -167,9 +167,7 @@ drawDynamic()
 while true do
     :: continue ::
     local e, _, x, y, _, p = event.pull("touch")
-    drawRectangleWithCenterText(1, 1, 100, 3, x .. " " .. y, 0, 0xffffff)
-    buffer.drawChanges()
-    if false and (e == "touch") then
+    if (e == "touch") then
         if state.devMode and not isAdmin(p) then
             goto continue
         end
