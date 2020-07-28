@@ -90,8 +90,8 @@ local function drawCurrency(x, y, currency, current)
     local img = currency.image
     buffer.drawRectangle(x + 3, y, 43, 3, --[[current and 0xA890AA or--]] 0xE3E3E3, 0, " ")
     buffer.drawText(x + 8, y    , 0, "Валюта: " .. currency.name)
-    buffer.drawText(x + 8, y + 1, 0, "Максимальная ставка: " .. currency.max or "-")
-    buffer.drawText(x + 8, y + 2, 0, "Имеется в казино: -")
+    buffer.drawText(x + 8, y + 1, 0, "Максимальная ставка: " .. (currency.max or "-"))
+    buffer.drawText(x + 8, y + 2, 0, "Имеется в казино: ЧУТЬ ПОЗЖЕ")
     casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. img, "/home/images/currencies/" .. img)
     buffer.drawImage(x, y, image.load("/home/images/currencies/" .. img)) -- 6x3
 end
@@ -134,6 +134,7 @@ local function drawDynamic()
     end
     drawRectangleWithCenterText(2, 46, 46, 1, "Текущая валюта", 0x431148, 0xFFFFFF)
     drawCurrency(2, 47, currentCurrency)
+    buffer.drawText(40, 48, 0, "Сменить")
 
     if (state.devMode) then
         drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x431148, 0xffffff)
@@ -176,6 +177,12 @@ while true do
 
         -- Currency
         if state.currencyDropdown then
+            if x >= 2 and x <= 46 and  y % 4 ~= 2 then
+                local currencyId = math.floor((y - (47 - 4 * #currencies)) / 4 + 1)
+                if currencyId > 0 and currencyId <= #currencies then
+                    casino.setCurrency(currencies[currencyId])
+                end
+            end
             state.currencyDropdown = false
             drawDynamic()
         elseif x >= 2 and y >= 46 and x <= 92 and y <= 50 then
@@ -206,6 +213,7 @@ while true do
                 if currentGame.available then
                     casino.downloadFile(REPOSITORY .. "/apps/" .. currentGame.file, "/home/apps/" .. currentGame.file)
                     local result, errorMsg = pcall(loadfile("/home/apps/" .. currentGame.file))
+                    casino.gameIsOver()
                     drawStatic()
                     drawDynamic()
                 end
