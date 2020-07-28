@@ -497,7 +497,7 @@ while true do
             if (#players_cards > 2) then
                 message("Только с двумя картами!")
             else
-                local payed, reason = casino.takeMoney(bet)
+                local payed, reason = casino.takeMoney(value)
                 if payed then
                     gpu.setBackground(0x00aa00)
                     value = value * 2

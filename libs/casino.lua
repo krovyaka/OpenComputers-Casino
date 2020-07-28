@@ -76,4 +76,11 @@ casino.gameIsOver = function()
     currentBetSize = 0
 end
 
+casino.getCurrencyInStorage = function(currency)
+    local item = {id=currency.id, dmg=currency.dmg}
+    local detail = meInterface.getItemDetail(item)
+    return detail and detail.basic().qty or 0
+end
+
+
 return casino
