@@ -439,6 +439,7 @@ local function rewardPlayer(reward)
     else
         message("Вы проиграли ")
     end
+    casino.gameIsOver()
 end
 
 local function updateCards()
@@ -462,12 +463,13 @@ while true do
     if e then
         if (game == false) then
             if x >= 30 and y >= 17 and x <= 37 and y <= 19 then
-                if (casino.takeMoney(value)) then
+                local payed, reason = casino.takeMoney(value)
+                if payed then
                     gpu.setBackground(0x000000)
                     gpu.setForeground(0xffffff)
                     startGame()
                 else
-                    message("У Вас недостаточно средств.")
+                    message(reason)
                 end
             elseif (x >= 30 and y >= 12 and x <= 37 and y <= 16) then
                 if (y == 12) then

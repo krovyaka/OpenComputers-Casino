@@ -152,7 +152,8 @@ while true do
                 error("Exit by request")
             end
             if (fixClicks(left, top)) then
-                if (casino.takeMoney(money)) then
+                local payed, reason = casino.takeMoney(money)
+                if payed then
                     if (endBets == 0) then
                         endBets = os.time() + 1080
                         message("Рулетка крутится через 15 сек после первой ставки.")
@@ -234,7 +235,7 @@ while true do
                         end
                     end
                 else
-                    message("У Вас недостаточно средств.")
+                    message(reason)
                 end
             end
         end
@@ -252,4 +253,5 @@ while true do
         casino.reward(bets[out])
         message("Вы выиграли " .. bets[out])
     end
+    casino.gameIsOver()
 end

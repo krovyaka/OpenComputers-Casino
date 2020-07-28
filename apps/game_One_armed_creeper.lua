@@ -146,7 +146,8 @@ while true do
         end
         -- Play button
         if y >= 23 and y <= 25 then
-            if casino.takeMoney(bet) then
+            local payed, reason = casino.takeMoney(bet)
+            if payed then
                 message("Вы поставили " .. bet)
                 local ratio = calculateRewardRatio(roll())
                 if ratio > 0 then
@@ -155,8 +156,9 @@ while true do
                 else
                     message("Вы проиграли")
                 end
+                casino.gameIsOver()
             else
-                message("Недостаточно средств")
+                message(reason)
             end
         end
         -- Exit button

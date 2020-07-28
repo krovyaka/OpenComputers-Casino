@@ -187,6 +187,7 @@ local function setDefaultColor(left, top, bet)
 end
 
 local function drawDisplay()
+    casino.gameIsOver()
     gpu.setBackground(0xe0e0e0)
     term.clear()
     drawRightMenu()
@@ -495,17 +496,20 @@ while true do
         elseif x >= 9 and y == 13 and x < 20 then
             if (#players_cards > 2) then
                 message("Только с двумя картами!")
-            elseif (casino.takeMoney(value)) then
-                gpu.setBackground(0x00aa00)
-                value = value * 2
-                gpu.setForeground(0xffffff)
-                gpu.set(13, 4, "Ставка: " .. value)
-                giveCardPlayer()
-                if (login) then
-                    dialerStartPlay()
-                end
             else
-                message("У Вас недостаточно средств.")
+                local payed, reason = casino.takeMoney(bet)
+                if payed then
+                    gpu.setBackground(0x00aa00)
+                    value = value * 2
+                    gpu.setForeground(0xffffff)
+                    gpu.set(13, 4, "Ставка: " .. value)
+                    giveCardPlayer()
+                    if (login) then
+                        dialerStartPlay()
+                    end
+                else
+                    message(reason)
+                end
             end
         elseif x >= 41 and x <= 69 and y >= 17 and y <= 19 then
             message("Сначала закончите игру.")
@@ -530,12 +534,13 @@ while true do
         elseif x >= 41 and x <= 69 and y >= 17 and y <= 19 then
             error("Exit by request")
         elseif (x >= 32 and x <= 37 and y >= 5 and y <= 7) then
-            if (casino.takeMoney(value)) then
+            local payed, reason = casino.takeMoney(value)
+            if payed then
                 player = p
                 login = true
                 startGame()
             else
-                message("У Вас недостаточно средств.")
+                message(reason)
             end
         end
     end

@@ -5,12 +5,15 @@ local filesystem = require("filesystem")
 local chest = component.chest
 local meInterface = component.me_interface
 
-local MONEY_ITEM = {
+local CURRENCY = {
     name = nil,
+    max = nil,
     image = nil,
     id = nil,
     dmg = nil
 }
+
+local currentBetSize = 0
 
 local chestSize = chest.getInventorySize()
 
@@ -29,24 +32,29 @@ casino.reward = function(money)
     money = math.floor(money)
     while money > 0 do
         local executed, g = pcall(function()
-            return meInterface.exportItem(MONEY_ITEM, "UP", money < 64 and money or 64).size
+            return meInterface.exportItem(CURRENCY, "UP", money < 64 and money or 64).size
         end)
         money = money - (money < 64 and money or 64)
     end
 end
 
 casino.takeMoney = function(money)
+    if CURRENCY.max and currentBetSize + money > CURRENCY.max then
+        return false, "Превышен максимум"
+    end
+
     local sum = 0
     for i = 1, chestSize do
         local item = chest.getStackInSlot(i)
-        if item and not item.nbt_hash and item.id == MONEY_ITEM.id then
+        if item and not item.nbt_hash and item.id == CURRENCY.id then
             sum = sum + chest.pushItem('DOWN', i, money - sum)
         end
     end
     if sum < money then
         casino.reward(sum)
-        return false, "Недостаточно средств."
+        return false, "Недостаточно средств"
     end
+    currentBetSize = currentBetSize + money
     return true
 end
 
@@ -57,11 +65,15 @@ casino.downloadFile = function(url, saveTo, forceRewrite)
 end
 
 casino.setCurrency = function(currency)
-    MONEY_ITEM = currency
+    CURRENCY = currency
 end
 
 casino.getCurrency = function()
-    return MONEY_ITEM
+    return CURRENCY
+end
+
+casino.gameIsOver = function()
+    currentBetSize = 0
 end
 
 return casino

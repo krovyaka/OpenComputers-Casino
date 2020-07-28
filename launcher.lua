@@ -14,7 +14,7 @@ end
 REPOSITORY = "https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino-NoVirtual/feature/Feature-MultiCurrency"
 
 local state = {
-    title = "Приветствуем вас, Котики ^_^. Эксклюзивно на /warp lol", -- TODO: Move to the config
+    title = "Приветствуем ваc у нас в казино на /warp casino", -- TODO: Move to the config
     admins = { "krovyak", "Durex77" }, -- TODO: Move to the config
     selection = 1,
     devMode = false,
@@ -53,7 +53,7 @@ local libs = {
         path = "/lib/currencies.lua"
     },
     {
-        url = REPOSITORY .. "/lib/slot_machine.lua",
+        url = REPOSITORY .. "/libs/slot_machine.lua",
         path = "/lib/slot_machine.lua"
     }
 }
@@ -86,6 +86,16 @@ local function drawBigText(x, y, text)
     end
 end
 
+local function drawCurrency(x, y, currency, current)
+    local img = currency.image
+    buffer.drawRectangle(x + 3, y, 43, 3, --[[current and 0xA890AA or--]] 0xE3E3E3, 0, " ")
+    buffer.drawText(x + 8, y    , 0, "Валюта: " .. currency.name)
+    buffer.drawText(x + 8, y + 1, 0, "Максимальная ставка: " .. currency.max or "-")
+    buffer.drawText(x + 8, y + 2, 0, "Имеется в казино: -")
+    casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. img, "/home/images/currencies/" .. img)
+    buffer.drawImage(x, y, image.load("/home/images/currencies/" .. img)) -- 6x3
+end
+
 local function drawStatic()
     buffer.setResolution(160, 50)
     drawRectangleWithCenterText(1, 1, 160, 5, state.title, 0x431148, 0xFFFFFF)
@@ -111,27 +121,19 @@ local function drawDynamic()
     drawBigText(102, 9, (currentGame.description or " ") .. "\n \n" .. "Разработчик: " .. currentGame.author)
 
     for i = 1, #games do
-        if (currentGame == games[i]) then
-            drawRectangleWithCenterText(2, 3 + i * 4, 46, 3, games[i].title, 0xA890AA, 0x000000)
-        else
-            drawRectangleWithCenterText(2, 3 + i * 4, 46, 3, games[i].title, 0xE3E3E3, 0x000000)
-        end
+        local bgColor = currentGame == games[i] and 0xA890AA or 0xE3E3E3
+        drawRectangleWithCenterText(2, 3 + i * 4, 46, 3, games[i].title, bgColor, 0x000000)
     end
 
-    local currency = casino.getCurrency()
-    local currencyImgFolder = "/home/images/currencies/"
+    local currentCurrency = casino.getCurrency()
     if state.currencyDropdown then
-        for i = 1, #currencies do
-            local y = 43 - 4 * (#currencies - i)
-            local img = currencies[i].image
-            casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. img, currencyImgFolder .. img)
-            buffer.drawImage(2, y, image.load(currencyImgFolder .. img))
+        local currencyLen = #currencies
+        for i = 1, currencyLen do
+            drawCurrency(2, 43 - 4 * (currencyLen - i), currencies[i], currencies[i] == currentCurrency)
         end
     end
     drawRectangleWithCenterText(2, 46, 46, 1, "Текущая валюта", 0x431148, 0xFFFFFF)
-    buffer.drawRectangle(2, 47, 46, 3, 0xE3E3E3, 0, " ")
-    casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. currency.image, currencyImgFolder .. currency.image)
-    buffer.drawImage(2, 47, image.load(currencyImgFolder .. currency.image))  -- 6x3
+    drawCurrency(2, 47, currentCurrency)
 
     if (state.devMode) then
         drawRectangleWithCenterText(51, 40, 50, 5, "Обновить", 0x431148, 0xffffff)
