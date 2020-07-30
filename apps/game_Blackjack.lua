@@ -454,8 +454,8 @@ local function startGame()
             gpu.set(22, 11, 'Продолжить')
         else
             message("Black Jack!")
-            message("Вы выиграли " .. value * 1.5)
-            casino.reward(value * 1.5)
+            message("Вы выиграли " .. value * 2.5)
+            casino.reward(value * 2.5)
             os.sleep(time_sleep_end)
             login = false
             drawDisplay()
