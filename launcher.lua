@@ -11,10 +11,10 @@ event.shouldInterrupt = function()
     return false
 end
 
-REPOSITORY = "https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino-NoVirtual/feature/Feature-MultiCurrency"
+REPOSITORY = "https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino-NoVirtual/master"
 
 local state = {
-    title = "Приветствуем ваc у нас в казино на /warp casino", -- TODO: Move to the config
+    title = "Приветствуем ваc у нас в казино на /warp a", -- TODO: Move to the config
     admins = { "krovyak", "Durex77" }, -- TODO: Move to the config
     selection = 1,
     devMode = false,

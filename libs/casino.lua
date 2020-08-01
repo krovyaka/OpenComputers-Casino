@@ -29,7 +29,8 @@ casino.splitString = function(inputStr, sep)
 end
 
 casino.reward = function(money)
-    money = math.floor(money)
+
+    money = math.floor(money + 0.5)
     while money > 0 do
         local executed, g = pcall(function()
             return meInterface.exportItem(CURRENCY, "UP", money < 64 and money or 64).size
