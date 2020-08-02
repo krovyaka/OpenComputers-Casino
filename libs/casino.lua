@@ -53,7 +53,7 @@ casino.takeMoney = function(money)
     end
     if sum < money then
         casino.reward(sum)
-        return false, "Недостаточно средств"
+        return false, "Нужно " .. money .. " " .. CURRENCY.name
     end
     currentBetSize = currentBetSize + money
     return true
