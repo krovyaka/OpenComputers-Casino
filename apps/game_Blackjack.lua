@@ -21,8 +21,8 @@ local function drawRightMenu()
     gpu.setForeground(0xAAAAAA)
     gpu.fill(41, 2, 28, 14, " ")
     gpu.set(42, 2, "Вывод:")
-    gpu.setForeground(0xFFFFFF)
     for i = 1, #consoleLines do
+        gpu.setForeground((15 - #consoleLines + i) * 0x111111)
         gpu.set(42, 16 - i, consoleLines[i])
     end
 end

@@ -17,7 +17,7 @@ local function drawRightMenu()
     buffer.drawRectangle(63, 2, 21, 12, 0, 0, " ")
     buffer.drawText(63, 2, 0xAAAAAA, "Вывод:")
     for i = 1, #consoleLines do
-        buffer.drawText(63, 2 + i, 0xFFFFFF, consoleLines[i])
+        buffer.drawText(63, 2 + i, (15 - #consoleLines + i) * 0x111111, consoleLines[i])
     end
     buffer.drawRectangle(63, 16, 21, 6, 0xFFFFFF, 0, " ")
     for i = 1, 6 do
