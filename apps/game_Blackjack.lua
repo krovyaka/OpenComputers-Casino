@@ -391,7 +391,7 @@ end
 local function dialerStartPlay()
     giveCardDialer()
     if (countCards(dialer_cards, true) == 21) then
-        message("Black Jack, Победа казино!")
+        message("Blackjack, Победа казино!")
         os.sleep(time_sleep_end)
         login = false
         drawDisplay()
@@ -442,7 +442,7 @@ local function startGame()
     giveCardDialer()
     if (countCards(players_cards, true) == 21) then
         if (countCards(dialer_cards, true) == 11) then
-            message("Black Jack!")
+            message("Blackjack!")
             blackjack = true
             gpu.setBackground(0x00aa00)
             gpu.fill(9, 11, 26, 3, " ")
@@ -453,9 +453,9 @@ local function startGame()
             gpu.fill(22, 11, 11, 1, ' ')
             gpu.set(22, 11, 'Продолжить')
         else
-            message("Black Jack!")
-            message("Вы выиграли " .. value * 2.5)
-            casino.reward(value * 2.5)
+            message("Blackjack!")
+            message("Вы выиграли " .. value * 1.5)
+            casino.reward(value * 1.5)
             os.sleep(time_sleep_end)
             login = false
             drawDisplay()
@@ -480,13 +480,13 @@ while true do
     if e and login and p == player then
         if blackjack then
             if (x >= 9 and y == 11 and x <= 19) then
-                reward(value, "Black Jack!")
+                reward(value, "Blackjack!")
             elseif (x >= 22 and y == 11 and x < 33) then
                 giveCardDialer()
                 if (countCards(dialer_cards, true) == 21) then
                     message("Blackjack!, победа казино!")
                 else
-                    reward(value * 1.5, "Blackjack!")
+                    reward(value * 2.5, "Blackjack!")
                 end
             end
         elseif x >= 9 and y == 11 and x < 20 then
@@ -499,6 +499,7 @@ while true do
             else
                 local payed, reason = casino.takeMoney(value)
                 if payed then
+                    message("Начало игры за " .. value)
                     gpu.setBackground(0x00aa00)
                     value = value * 2
                     gpu.setForeground(0xffffff)

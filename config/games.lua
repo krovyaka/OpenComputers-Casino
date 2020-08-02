@@ -24,7 +24,7 @@ table.insert(games, {
 table.insert(games, {
     title = "Блэкджек",
     file = "game_Blackjack.lua",
-    available = false, -- Закрыто до выяснения причин неправильных наград
+    available = true,
     image = "game_Blackjack.pic",
     author = "Durex77",
     description = "Блэкджек (англ. Blackjack «чёрный валет») — одна из самых\n" ..
