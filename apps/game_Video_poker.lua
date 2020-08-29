@@ -26,8 +26,8 @@ local function drawRightMenu()
     gpu.setForeground(0xAAAAAA)
     gpu.fill(41, 2, 28, 14, " ")
     gpu.set(42, 2, "Вывод:")
-    gpu.setForeground(0xFFFFFF)
     for i = 1, #consoleLines do
+        gpu.setForeground((15 - #consoleLines + i) * 0x111111)
         gpu.set(42, 16 - i, consoleLines[i])
     end
 end
@@ -439,6 +439,7 @@ local function rewardPlayer(reward)
     else
         message("Вы проиграли ")
     end
+    casino.gameIsOver()
 end
 
 local function updateCards()
@@ -462,12 +463,13 @@ while true do
     if e then
         if (game == false) then
             if x >= 30 and y >= 17 and x <= 37 and y <= 19 then
-                if (casino.takeMoney(value)) then
+                local payed, reason = casino.takeMoney(value)
+                if payed then
                     gpu.setBackground(0x000000)
                     gpu.setForeground(0xffffff)
                     startGame()
                 else
-                    message("У Вас недостаточно средств.")
+                    message(reason)
                 end
             elseif (x >= 30 and y >= 12 and x <= 37 and y <= 16) then
                 if (y == 12) then

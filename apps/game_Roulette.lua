@@ -17,7 +17,7 @@ local function message(msg)
     table.insert(consoleLines, msg)
     buffer.drawRectangle(3, 23, 71, 9, 0x002f15, 0xffffff, " ")
     for i = 1, #consoleLines do
-        buffer.drawText(4, 32 - i, 0xffffff, consoleLines[i])
+        buffer.drawText(4, 32 - i, (15 - #consoleLines + i) * 0x111111, consoleLines[i])
     end
     buffer.drawChanges()
 end
@@ -51,16 +51,16 @@ local function drawStatic()
     for i = 1, 36 do
         drawNumber(19 + math.floor((i - 1) / 3) * 7, 2 + ((3 - i) % 3 * 4), i)
     end
-    buffer.drawRectangle(103, 2, 9, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(103, 6, 9, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(103, 10, 9, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(19, 14, 27, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(47, 14, 27, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(75, 14, 27, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(19, 18, 13, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(33, 18, 13, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(75, 18, 13, 3, 0x34a513, 0xffffff, ' ')
-    buffer.drawRectangle(89, 18, 13, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(103, 2,  9,  3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(103, 6,  9,  3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(103, 10, 9,  3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(19,  14, 27, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(47,  14, 27, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(75,  14, 27, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(19,  18, 13, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(33,  18, 13, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(75,  18, 13, 3, 0x34a513, 0xffffff, ' ')
+    buffer.drawRectangle(89,  18, 13, 3, 0x34a513, 0xffffff, ' ')
     buffer.drawText(106, 3, 0xffffff, "2к1")
     buffer.drawText(106, 7, 0xffffff, "2к1")
     buffer.drawText(106, 11, 0xffffff, "2к1")
@@ -71,16 +71,21 @@ local function drawStatic()
     buffer.drawText(38, 19, 0xffffff, "Чёт")
     buffer.drawText(79, 19, 0xffffff, "Нечёт")
     buffer.drawText(91, 19, 0xffffff, "19 до 36")
-    buffer.drawRectangle(75, 29, 36, 3, 0xff0000, 0xffffff, ' ')
-    buffer.drawRectangle(47, 18, 13, 3, 0xff0000, 0xffffff, ' ')
-    buffer.drawRectangle(3, 2, 8, 19, 0xffb109, 0xffffff, ' ')
-    buffer.drawRectangle(3, 9, 8, 5, 0xffda54, 0xffffff, ' ')
-    buffer.drawRectangle(61, 18, 13, 3, 0x000000, 0xffffff, ' ')
-    buffer.drawRectangle(3, 22, 71, 10, 0xaaaaaa, 0xffffff, ' ')
+    buffer.drawRectangle(75, 29, 36, 3,  0xff0000, 0xffffff, ' ')
+    buffer.drawRectangle(47, 18, 13, 3,  0xff0000, 0xffffff, ' ')
+    buffer.drawRectangle(3,  2,  8,  19, 0xffb109, 0xffffff, ' ')
+    buffer.drawRectangle(3,  9,  8,  5,  0xffda54, 0xffffff, ' ')
+    buffer.drawRectangle(61, 18, 13, 3,  0x000000, 0xffffff, ' ')
+    buffer.drawRectangle(3,  22, 71, 10, 0xaaaaaa, 0xffffff, ' ')
+    buffer.drawRectangle(3,  23, 71, 9,  0x002f15, 0xffffff, " ")
+    buffer.drawRectangle(75, 22, 36, 1,  0xaaaaaa, 0xffffff, ' ')
+    buffer.drawRectangle(75, 23, 36, 1,  0x002f15, 0xffffff, ' ')
     buffer.drawText(90, 30, 0xffffff, "Выход")
     buffer.drawText(50, 19, 0xffffff, "Красное")
     buffer.drawText(64, 19, 0xffffff, "Чёрное")
-    buffer.drawText(4, 22, 0x000000, "Вывод:")
+    buffer.drawText(4,  22, 0x000000, "Вывод:")
+    buffer.drawText(76, 22, 0x000000, "Текущая валюта:")
+    buffer.drawText(76, 23, 0xffffff, casino.getCurrency().name or "")
     buffer.drawChanges()
 end
 
@@ -152,7 +157,8 @@ while true do
                 error("Exit by request")
             end
             if (fixClicks(left, top)) then
-                if (casino.takeMoney(money)) then
+                local payed, reason = casino.takeMoney(money)
+                if payed then
                     if (endBets == 0) then
                         endBets = os.time() + 1080
                         message("Рулетка крутится через 15 сек после первой ставки.")
@@ -234,7 +240,7 @@ while true do
                         end
                     end
                 else
-                    message("У Вас недостаточно средств.")
+                    message(reason)
                 end
             end
         end
@@ -252,4 +258,5 @@ while true do
         casino.reward(bets[out])
         message("Вы выиграли " .. bets[out])
     end
+    casino.gameIsOver()
 end

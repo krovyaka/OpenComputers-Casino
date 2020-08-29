@@ -23,8 +23,8 @@ local function drawRightMenu()
     gpu.setForeground(0xAAAAAA)
     gpu.fill(41, 2, 28, 14, " ")
     gpu.set(42, 2, "Вывод:")
-    gpu.setForeground(0xFFFFFF)
     for i = 1, #consoleLines do
+        gpu.setForeground((15 - #consoleLines + i) * 0x111111)
         gpu.set(42, 16 - i, consoleLines[i])
     end
 end
@@ -272,6 +272,7 @@ local function lose()
     message("Вы проиграли!")
     os.sleep(1)
     drawDisplay()
+    casino.gameIsOver()
 end
 
 local function casinoPlay(type_of_game)
@@ -315,6 +316,7 @@ while true do
             login = false
             os.sleep(1)
             drawDisplay()
+            casino.gameIsOver()
         elseif (x >= 17 and y == 10 and x <= 24) then
             casinoPlay('more')
         elseif (x >= 17 and y == 13 and x <= 24) then
@@ -342,11 +344,12 @@ while true do
         elseif x >= 41 and x <= 69 and y >= 17 and y <= 19 then
             error("Exit by request")
         elseif (x >= 32 and x <= 37 and y >= 5 and y <= 7) then
-            if casino.takeMoney(value) then
+            local payed, reason = casino.takeMoney(value)
+            if payed then
                 login = true
                 startGame()
             else
-                message("У Вас недостаточно средств.")
+                message(reason)
             end
         end
     end

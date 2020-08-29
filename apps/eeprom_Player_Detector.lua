@@ -9,12 +9,12 @@ function os.sleep(timeout)
 end
 
 local isActive = false
-local OUTPUT_SIDE = 5
+local OUTPUT_SIDE = 1
 
 local function scan()
     local scanResult = getPlayers()
     for i = 1, #scanResult do
-        if scanResult[i].distance < 4.8 then
+        if scanResult[i].distance <= 4 then
             return true
         end
     end

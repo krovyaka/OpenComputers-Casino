@@ -17,7 +17,7 @@ local function drawRightMenu()
     buffer.drawRectangle(63, 2, 21, 12, 0, 0, " ")
     buffer.drawText(63, 2, 0xAAAAAA, "Вывод:")
     for i = 1, #consoleLines do
-        buffer.drawText(63, 2 + i, 0xFFFFFF, consoleLines[i])
+        buffer.drawText(63, 2 + i, (15 - #consoleLines + i) * 0x111111, consoleLines[i])
     end
     buffer.drawRectangle(63, 16, 21, 6, 0xFFFFFF, 0, " ")
     for i = 1, 6 do
@@ -53,7 +53,7 @@ local function initStaticData()
     for i = 1, #pre_symbols do
         local symbol = sm.Symbol:new()
         local imgPath = imagesFolder .. pre_symbols[i][1] .. ".pic"
-        local downloadUrl = repository .. "/resources/images/one_armed_creeper/" .. pre_symbols[i][1] .. ".pic"
+        local downloadUrl = REPOSITORY .. "/resources/images/one_armed_creeper/" .. pre_symbols[i][1] .. ".pic"
         casino.downloadFile(downloadUrl, imgPath)
         symbol.image = image.load(imgPath)
         symbol.name = pre_symbols[i][3]
@@ -146,7 +146,8 @@ while true do
         end
         -- Play button
         if y >= 23 and y <= 25 then
-            if casino.takeMoney(bet) then
+            local payed, reason = casino.takeMoney(bet)
+            if payed then
                 message("Вы поставили " .. bet)
                 local ratio = calculateRewardRatio(roll())
                 if ratio > 0 then
@@ -155,8 +156,9 @@ while true do
                 else
                     message("Вы проиграли")
                 end
+                casino.gameIsOver()
             else
-                message("Недостаточно средств")
+                message(reason)
             end
         end
         -- Exit button

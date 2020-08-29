@@ -21,8 +21,8 @@ local function drawRightMenu()
     gpu.setForeground(0xAAAAAA)
     gpu.fill(41, 2, 28, 14, " ")
     gpu.set(42, 2, "Вывод:")
-    gpu.setForeground(0xFFFFFF)
     for i = 1, #consoleLines do
+        gpu.setForeground((15 - #consoleLines + i) * 0x111111)
         gpu.set(42, 16 - i, consoleLines[i])
     end
 end
@@ -187,6 +187,7 @@ local function setDefaultColor(left, top, bet)
 end
 
 local function drawDisplay()
+    casino.gameIsOver()
     gpu.setBackground(0xe0e0e0)
     term.clear()
     drawRightMenu()
@@ -390,7 +391,7 @@ end
 local function dialerStartPlay()
     giveCardDialer()
     if (countCards(dialer_cards, true) == 21) then
-        message("Black Jack, Победа казино!")
+        message("Blackjack, Победа казино!")
         os.sleep(time_sleep_end)
         login = false
         drawDisplay()
@@ -441,7 +442,7 @@ local function startGame()
     giveCardDialer()
     if (countCards(players_cards, true) == 21) then
         if (countCards(dialer_cards, true) == 11) then
-            message("Black Jack!")
+            message("Blackjack!")
             blackjack = true
             gpu.setBackground(0x00aa00)
             gpu.fill(9, 11, 26, 3, " ")
@@ -452,7 +453,7 @@ local function startGame()
             gpu.fill(22, 11, 11, 1, ' ')
             gpu.set(22, 11, 'Продолжить')
         else
-            message("Black Jack!")
+            message("Blackjack!")
             message("Вы выиграли " .. value * 1.5)
             casino.reward(value * 1.5)
             os.sleep(time_sleep_end)
@@ -479,13 +480,13 @@ while true do
     if e and login and p == player then
         if blackjack then
             if (x >= 9 and y == 11 and x <= 19) then
-                reward(value, "Black Jack!")
+                reward(value, "Blackjack!")
             elseif (x >= 22 and y == 11 and x < 33) then
                 giveCardDialer()
                 if (countCards(dialer_cards, true) == 21) then
                     message("Blackjack!, победа казино!")
                 else
-                    reward(value * 1.5, "Blackjack!")
+                    reward(value * 2.5, "Blackjack!")
                 end
             end
         elseif x >= 9 and y == 11 and x < 20 then
@@ -495,17 +496,21 @@ while true do
         elseif x >= 9 and y == 13 and x < 20 then
             if (#players_cards > 2) then
                 message("Только с двумя картами!")
-            elseif (casino.takeMoney(value)) then
-                gpu.setBackground(0x00aa00)
-                value = value * 2
-                gpu.setForeground(0xffffff)
-                gpu.set(13, 4, "Ставка: " .. value)
-                giveCardPlayer()
-                if (login) then
-                    dialerStartPlay()
-                end
             else
-                message("У Вас недостаточно средств.")
+                local payed, reason = casino.takeMoney(value)
+                if payed then
+                    message("Начало игры за " .. value)
+                    gpu.setBackground(0x00aa00)
+                    value = value * 2
+                    gpu.setForeground(0xffffff)
+                    gpu.set(13, 4, "Ставка: " .. value)
+                    giveCardPlayer()
+                    if (login) then
+                        dialerStartPlay()
+                    end
+                else
+                    message(reason)
+                end
             end
         elseif x >= 41 and x <= 69 and y >= 17 and y <= 19 then
             message("Сначала закончите игру.")
@@ -530,12 +535,13 @@ while true do
         elseif x >= 41 and x <= 69 and y >= 17 and y <= 19 then
             error("Exit by request")
         elseif (x >= 32 and x <= 37 and y >= 5 and y <= 7) then
-            if (casino.takeMoney(value)) then
+            local payed, reason = casino.takeMoney(value)
+            if payed then
                 player = p
                 login = true
                 startGame()
             else
-                message("У Вас недостаточно средств.")
+                message(reason)
             end
         end
     end

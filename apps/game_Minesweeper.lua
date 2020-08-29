@@ -123,6 +123,7 @@ local function endGame()
     gpu.fill(58, 29, 17, 5, " ")
     gpu.set(61, 31, "Начать игру")
     game = false
+    casino.gameIsOver()
 end
 
 local function drawBets()
@@ -186,7 +187,8 @@ while true do
 
     -- start game button
     if not game and left >= 58 and left <= 75 and top >= 29 and top <= 33 then
-        if (casino.takeMoney(bets[bet])) then
+        local payed, reason = casino.takeMoney(bets[bet])
+        if payed then
             generateFields()
             gpu.setBackground(0xffa500)
             gpu.fill(58, 29, 17, 5, " ")
