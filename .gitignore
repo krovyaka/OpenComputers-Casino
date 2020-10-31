@@ -1,3 +1,4 @@
 # IntellijIdea files
 *.iml
 .idea
+*.code-workspace
