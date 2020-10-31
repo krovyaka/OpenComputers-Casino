@@ -111,7 +111,7 @@ local function drawStatic()
     if (state.devMode) then
         writeCenter(158, 1, "{dev}", 0xE700FF)
         writeCenter(160, 2, "X", 0xFF0000)
-        writeCenter(156, 3, "[LIBS]", 0xE700FF)
+        writeCenter(157, 3, "[LIBS]", 0xE700FF)
     else
         writeCenter(158, 1, "{dev}", 0x78517C)
     end
@@ -120,21 +120,22 @@ local function drawStatic()
 end
 
 local function drawLibSettings()
+    buffer.drawRectangle(49, 6, 112, 45, 0xFFFFFF, 0, " ")
     for i = 1, #libs do
-        buffer.drawText(51, 5 + i * 2, "Скачать  Правка");
-        buffer.drawText(81, 5 + i * 2, libs[i].path);
+        buffer.drawText(51, 5 + i * 2, 0x0000AA, "Скачать  Правка");
+        buffer.drawText(68, 5 + i * 2, 0, libs[i].path);
     end
+    buffer.drawText(51, 5 + (1 + #libs) * 2, 0xff0000, "При редактировании, компьютер не будет защищен от других игроков!");
+    buffer.drawText(51, 6 + (1 + #libs) * 2, 0xff0000, "Изменения вступят в силу после перезагрузки!");
     buffer.drawChanges()
 end
 
 local function drawDynamic()
-    local selection = games[state.selection]
-
-    if selection == 0 then
+    if state.selection == 0 then
         drawLibSettings()
         return
     end
-
+    local selection = games[state.selection]
     local gameImgPath = "/home/images/games_logo/" .. selection.image
     buffer.drawRectangle(49, 6, 112, 45, 0xFFFFFF, 0, " ")
     buffer.drawRectangle(1, 6, 48, 45, 0xF2F2F2, 0, " ")
@@ -243,16 +244,25 @@ while true do
             end
         end
 
-        buffer.drawText(51, 5 + i * 2, "Скачать  Правка");
         -- Lib buttons
-        if state.selection == 0 and y >= 7 then
-            local lib = (y - 7) / 2
-            buffer.drawText(1, 1, 0, tostring(lib))
-            buffer.drawChanges();
-
-            if x >= 51 and x <= 65 then
+        if state.devMode and state.selection == 0 and y >= 7 and y % 2 == 1 then
+            local lib = libs[math.floor((y - 7) / 2) + 1]
+            -- Download
+            if lib and x >= 51 and x <= 57 then
+                buffer.drawText(51, y, 0xAAAAAA, "Скачать");
+                buffer.drawChanges()
+                casino.downloadFile(lib.url, lib.path, true)
+                buffer.drawText(51, y, 0x0000AA, "Скачать");
+                buffer.drawChanges()
             end
-            if x >= 68 and x <= 80 then
+            -- Edit
+            if lib and x >= 60 and x <= 65 then
+                local component = require("component")
+                component.gpu.setBackground(0);
+                component.gpu.setForeground(0xffffff);
+                shell.execute("edit " .. lib.path)
+                drawStatic()
+                drawDynamic()
             end
         end
 
