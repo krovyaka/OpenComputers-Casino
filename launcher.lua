@@ -11,7 +11,12 @@ event.shouldInterrupt = function()
     return false
 end
 
+local proxy = ""
 REPOSITORY = "https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino-NoVirtual/master"
+
+if proxy ~= "" then
+    REPOSITORY = proxy .. "/" .. REPOSITORY
+end
 
 local state = {
     title = "Приветствуем ваc у нас в казино на /warp a", -- TODO: Move to the config
