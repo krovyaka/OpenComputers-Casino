@@ -67,7 +67,7 @@ local libs = {
 
 local function isAdmin(player)
     for i = 1, #settings.ADMINS do
-        if #settings.ADMINS[i] == player then
+        if settings.ADMINS[i] == player then
             return true
         end
     end
@@ -94,14 +94,15 @@ local function drawBigText(x, y, text)
 end
 
 local function drawCurrency(x, y, currency, current)
-    local img = currency.image
-    if not img then return end
     buffer.drawRectangle(x + 3, y, 43, 3, --[[current and 0xA890AA or--]] 0xE3E3E3, 0, " ")
     buffer.drawText(x + 8, y    , 0, "Валюта: " .. currency.name)
     buffer.drawText(x + 8, y + 1, 0, "Максимальная ставка: " .. (currency.max or "-"))
     buffer.drawText(x + 8, y + 2, 0, "Имеется у казино: " .. casino.getCurrencyInStorage(currency))
-    casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. img, "/home/images/currencies/" .. img)
-    buffer.drawImage(x, y, image.load("/home/images/currencies/" .. img)) -- 6x3
+    local img = currency.image
+    if img then
+        casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. img, "/home/images/currencies/" .. img)
+        buffer.drawImage(x, y, image.load("/home/images/currencies/" .. img)) -- 6x3
+    end
 end
 
 local function drawStatic()
