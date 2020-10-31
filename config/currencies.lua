@@ -23,4 +23,8 @@ table.insert(currencies, {
     max = 200
 })
 
+table.insert(currencies, {
+    name = "Бесплатно",
+})
+
 return currencies

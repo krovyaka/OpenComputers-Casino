@@ -29,6 +29,9 @@ casino.splitString = function(inputStr, sep)
 end
 
 casino.reward = function(money)
+    if not CURRENCY.id then
+        return true
+    end
 
     money = math.floor(money + 0.5)
     while money > 0 do
@@ -40,6 +43,10 @@ casino.reward = function(money)
 end
 
 casino.takeMoney = function(money)
+    if not CURRENCY.id then
+        return true
+    end 
+
     if CURRENCY.max and currentBetSize + money > CURRENCY.max then
         return false, "Превышен максимум"
     end
@@ -78,6 +85,9 @@ casino.gameIsOver = function()
 end
 
 casino.getCurrencyInStorage = function(currency)
+    if not currency.id then
+        return -1
+    end 
     local item = {id=currency.id, dmg=currency.dmg}
     local detail = meInterface.getItemDetail(item)
     return detail and detail.basic().qty or 0
