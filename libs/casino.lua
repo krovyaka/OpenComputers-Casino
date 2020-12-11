@@ -5,6 +5,7 @@ local filesystem = require("filesystem")
 local chest = component.chest
 local meInterface = component.me_interface
 local io = require("io")
+local serialization = require("serialization")
 local CURRENCY = {
     name = nil,
     max = nil,
