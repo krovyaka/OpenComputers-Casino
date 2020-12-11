@@ -1,4 +1,4 @@
-local REPOSITOTY = "http://durex77.pythonanywhere.com/krov/proxy?url=https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino/feature/NewGame/OpenChest/"
+local REPOSITOTY = "https://raw.githubusercontent.com/krovyaka/OpenComputers-Casino/feature/NewGame/OpenChest/"
 
 local shell = require("shell")
 shell.execute("wget -fq " .. REPOSITOTY .. "/launcher.lua /home/1.lua")
