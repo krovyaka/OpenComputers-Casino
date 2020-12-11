@@ -142,7 +142,7 @@ local function drawWaitingInverface()
 end
 
 local function initializeDatabaseItems()
-    local file = io.open('items.cfg', 'r')
+    local file = io.open('lib/items.cfg', 'r')
     items = serialization.unserialize(file:read(999999))
     for index, item in pairs(items) do
         chanceCount = chanceCount + item.chance
