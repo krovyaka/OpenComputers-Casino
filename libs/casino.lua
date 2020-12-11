@@ -4,7 +4,7 @@ local shell = require("shell")
 local filesystem = require("filesystem")
 local chest = component.chest
 local meInterface = component.me_interface
-
+local oi = require("oi")
 local CURRENCY = {
     name = nil,
     max = nil,
