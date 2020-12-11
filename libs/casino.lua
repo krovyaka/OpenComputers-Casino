@@ -4,7 +4,7 @@ local shell = require("shell")
 local filesystem = require("filesystem")
 local chest = component.chest
 local meInterface = component.me_interface
-local oi = require("oi")
+local io = require("io")
 local CURRENCY = {
     name = nil,
     max = nil,
@@ -67,7 +67,7 @@ casino.takeMoney = function(money)
 end
 
 casino.rewardManually = function(player, id, dmg, count)
-    local file = oi.open('manual_rewards.lua', 'r')
+    local file = io.open('manual_rewards.lua', 'r')
     local items = serialization.unserialize(file:read(999999))
     file:close()
     local playerItems = items[player]
@@ -80,7 +80,7 @@ casino.rewardManually = function(player, id, dmg, count)
     item.count = count
     table.insert(playerItems, item)
     items[player] = playerItems
-    file = oi.open('manual_rewards.lua', 'w')
+    file = io.open('manual_rewards.lua', 'w')
     file:write(serialization.serialize(items))
     file:close()
 end
