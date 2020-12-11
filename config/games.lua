@@ -112,8 +112,8 @@ table.insert(games, {
 })
 
 table.insert(games, {
-    title = "Однорукий Крипер",
-    file = "game_One_armed_creeper.lua",
+    title = "Openchest",
+    file = "game_Openchest.lua",
     available = true,
     image = "game_One_armed_creeper.pic",
     author = "krovyaka",
