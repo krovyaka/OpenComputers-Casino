@@ -66,6 +66,37 @@ casino.takeMoney = function(money)
     return true
 end
 
+casino.rewardManually = function(player, id, dmg, count)
+    local file = oi.open('manual_rewards.lua', 'r')
+    local items = serialization.unserialize(file:read(999999))
+    file:close()
+    local playerItems = items[player]
+    if (not playerItems) then
+        playerItems = {}
+    end
+    local item = {}
+    item.id = id
+    item.dmg = dmg
+    item.count = count
+    table.insert(playerItems, item)
+    items[player] = playerItems
+    file = oi.open('manual_rewards.lua', 'w')
+    file:write(serialization.serialize(items))
+    file:close()
+end
+
+casino.rewardItem = function(id, dmg, count)
+    local items = meInterface.getAvailableItems()
+    for i=1,#items do
+        if (items[i].fingerprint.id == id and items[i].fingerprint.dmg == dmg and items[i].size >= count) then
+            item = items[i]
+            meInterface.exportItem(items[i].fingerprint,"UP" , count)
+            return true
+        end
+    end
+    return false
+end
+
 casino.downloadFile = function(url, saveTo, forceRewrite)
     if forceRewrite or not filesystem.exists(saveTo) then
         shell.execute("wget -fq " .. url .. " " .. saveTo)
