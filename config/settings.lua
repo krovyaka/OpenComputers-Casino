@@ -4,4 +4,9 @@ settings.REPOSITORY = "https://raw.githubusercontent.com/krovyaka/OpenComputers-
 settings.TITLE = "Приветствуем ваc у нас в казино"
 settings.ADMINS = { "krovyak", "Durex77" }
 
+-- CHEST / PIM / ...
+settings.PAYMENT_METHOD = "PIM"
+settings.CONTAINER_PAY = "DOWN"
+settings.CONTAINER_GAIN = "UP"
+
 return settings;

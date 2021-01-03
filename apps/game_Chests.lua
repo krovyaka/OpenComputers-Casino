@@ -40,33 +40,31 @@ local function drawChest(id, isOpen)
     buffer.drawRectangle(x + 2, y + 1, 14, 1, 0xA8772C, 0, " ")
     buffer.drawRectangle(x + 2, y + 3, 14, 5, 0xA8772C, 0, " ")
     buffer.drawRectangle(x + 8, y + 2, 2, 2, 0x707070, 0, " ")
-    if isOpen then
-        buffer.drawRectangle(x, y, 18, 2, 0xFFFFFF, 0, " ")
-    end
+    if isOpen then buffer.drawRectangle(x, y, 18, 2, 0xFFFFFF, 0, " ") end
 end
 
 local function drawChestContent(id)
     local content = tostring(chests[id])
-    local x, y = id % 3 * 20 + 14 - math.floor(string.len(content) / 2), math.floor(id / 3) * 10 + 8
+    local x, y = id % 3 * 20 + 14 - math.floor(string.len(content) / 2),
+                 math.floor(id / 3) * 10 + 8
     buffer.drawText(x, y, 0xFFFFFF, content)
 end
 
 local function getChestId(x, y)
     local x, y = x - 5, y - 3
     if x % 20 ~= 18 and x % 20 ~= 19 and y % 10 ~= 9 then
-        return math.floor(x / 20) + (math.floor(y / 10) * 3) 
+        return math.floor(x / 20) + (math.floor(y / 10) * 3)
     end
 end
 
 local function gameEnd(chest)
     drawChest(chest, true)
-    for i = 0, 8 do
-        drawChestContent(i)
-    end
+    for i = 0, 8 do drawChestContent(i) end
     buffer.drawChanges()
     local reward = chests[chest]
     message("Вы выиграли " .. reward)
     casino.reward(reward)
+    casino.gameIsOver()
     game = false
 end
 
@@ -117,15 +115,13 @@ buffer.drawChanges()
 
 while true do
     local _, _, x, y = event.pull("touch")
-    
+
     if x >= 5 and x <= 62 and y >= 3 and y <= 31 then
         if not game then
             message("Начните игру")
         else
             local chest = getChestId(x, y)
-            if chest ~= nil then
-                gameEnd(chest)
-            end
+            if chest ~= nil then gameEnd(chest) end
         end
     end
 
@@ -144,7 +140,7 @@ while true do
             end
             -- Play button
             if y >= 26 and y <= 28 then
-                local payed, reason = casino.takeMoney( BET_VALUES[bet])
+                local payed, reason = casino.takeMoney(BET_VALUES[bet])
                 if payed then
                     gameStart()
                 else
