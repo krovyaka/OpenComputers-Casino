@@ -16,14 +16,14 @@ local CURRENCY = {
 local currentBetSize = 0
 
 
-local container = nil
+casino.container = nil
 local containerSize = 0
 
 if settings.PAYMENT_METHOD == 'CHEST' then
-    container = component.chest
-    containerSize = container.getInventorySize()
+    casino.container = component.chest
+    containerSize = casino.container.getInventorySize()
 elseif settings.PAYMENT_METHOD == 'PIM' then
-    container = component.pim
+    casino.container = component.pim
     containerSize = 40
 end
 
@@ -63,9 +63,9 @@ casino.takeMoney = function(money)
 
     local sum = 0
     for i = 1, containerSize do
-        local item = container.getStackInSlot(i)
+        local item = casino.container.getStackInSlot(i)
         if item and not item.nbt_hash and item.id == CURRENCY.id then
-            sum = sum + container.pushItem(settings.CONTAINER_PAY, i, money - sum)
+            sum = sum + casino.container.pushItem(settings.CONTAINER_PAY, i, money - sum)
         end
     end
     if sum < money then

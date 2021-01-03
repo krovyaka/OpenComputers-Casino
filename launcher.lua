@@ -3,12 +3,25 @@ local event = require("event")
 local shell = require("shell")
 local unicode = require("unicode")
 local settings = require("settings")
+local computer = require('computer')
 local games
 local currencies
 local image
 local buffer
 
+REPOSITORY = settings.REPOSITORY
+
+CURRENT_APP = nil
+SHOULD_INTERRUPT = false
+
 event.shouldInterrupt = function()
+    if SHOULD_INTERRUPT then
+        SHOULD_INTERRUPT = false
+        if CURRENT_APP then
+            CURRENT_APP = nil
+            return true
+        end
+    end
     return false
 end
 
@@ -18,7 +31,6 @@ local state = {
     currencyDropdown = false
 }
 
-REPOSITORY = settings.REPOSITORY
 
 local requiredDirectories = { "/lib/FormatModules", "/home/images/", "/home/images/games_logo", "/home/images/currencies", "/home/apps" }
 
@@ -173,6 +185,45 @@ local function drawDynamic()
     buffer.drawChanges()
 end
 
+local function removeUsers()
+    local users = table.pack(computer.users())
+    for i = 1, #users do
+        if not isAdmin(users[i]) then
+            computer.removeUser(users[i])
+        end
+    end
+end
+
+local function onPimPlayerOff(_, name)
+    SHOULD_INTERRUPT = true
+end
+
+local function handlePim()
+    if casino.container.getInventoryName() == 'pim' then
+        removeUsers()
+        buffer.setResolution(32, 9)
+        buffer.drawRectangle(1, 1, 32, 9, 0xFFFFFF, 0x0, ' ')
+        buffer.drawText(5, 3, 0x000000, 'Наступите, чтобы начать')
+        buffer.drawText(15, 6, 0x000000, ' ||')
+        buffer.drawText(15, 7, 0x000000, ' ||')
+        buffer.drawText(15, 8, 0x000000, '\\  /')
+        buffer.drawText(15, 9, 0x000000, ' \\/')
+        buffer.drawChanges()
+        while casino.container.getInventoryName() == 'pim' do
+            os.sleep(0.5)
+        end
+        buffer.drawRectangle(1, 1, 32, 9, 0xFFFFFF, 0x0, ' ')
+        drawRectangleWithCenterText(1, 1, 32, 1, casino.container.getInventoryName(), 0xFFFFFF, 0x0)
+        buffer.drawText(2, 4, 0xFF0000, 'Не покидайте PIM до конца игры')
+        buffer.drawText(4, 6, 0x000000, 'Нажмите, чтобы продолжить')
+        buffer.drawChanges()
+        event.pull('touch')
+        drawStatic()
+        drawDynamic()
+        buffer.drawChanges()
+    end
+end
+
 local function initLauncher()
     for i = 1, #requiredDirectories do
         shell.execute("md " .. requiredDirectories[i])
@@ -192,10 +243,12 @@ buffer.flush()
 drawStatic()
 drawDynamic()
 
+if settings.PAYMENT_METHOD == 'PIM' then event.listen('player_off', onPimPlayerOff) end
+
 while true do
     :: continue ::
-    local e, _, x, y, _, p = event.pull("touch")
-    if (e == "touch") then
+    local e, _, x, y, _, p = event.pull(1)
+    if e == "touch" then
         if state.devMode and not isAdmin(p) then
             goto continue
         end
@@ -237,7 +290,9 @@ while true do
             else
                 if selection.available then
                     casino.downloadFile(REPOSITORY .. "/apps/" .. selection.file, "/home/apps/" .. selection.file)
+                    CURRENT_APP = selection.title
                     local result, errorMsg = pcall(loadfile("/home/apps/" .. selection.file))
+                    CURRENT_APP = nil
                     casino.gameIsOver()
                     drawStatic()
                     drawDynamic()
@@ -287,4 +342,5 @@ while true do
             drawDynamic()
         end
     end
+    if settings.PAYMENT_METHOD == 'PIM' then handlePim() end
 end
