@@ -201,6 +201,7 @@ end
 local function handlePim()
     if casino.container.getInventoryName() == 'pim' then
         removeUsers()
+        casino.setCurrency(currencies[1])
         buffer.setResolution(32, 9)
         buffer.drawRectangle(1, 1, 32, 9, 0xFFFFFF, 0x0, ' ')
         buffer.drawText(5, 3, 0x000000, 'Наступите, чтобы начать')
@@ -246,7 +247,7 @@ drawDynamic()
 if settings.PAYMENT_METHOD == 'PIM' then event.listen('player_off', onPimPlayerOff) end
 
 while true do
-    :: continue ::
+    :: continue :: -- В Lua отсутствует ключевое слово continiue
     local e, _, x, y, _, p = event.pull(1)
     if e == "touch" then
         if state.devMode and not isAdmin(p) then
@@ -263,6 +264,7 @@ while true do
             end
             state.currencyDropdown = false
             drawDynamic()
+            goto continue
         elseif x >= 2 and y >= 46 and x <= 92 and y <= 50 and state.selection > 0 then
             state.currencyDropdown = true
             drawDynamic()
