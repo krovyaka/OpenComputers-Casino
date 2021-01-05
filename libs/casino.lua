@@ -1,8 +1,8 @@
+local settings = require("settings")
 local casino = {}
 local component = require("component")
 local shell = require("shell")
 local filesystem = require("filesystem")
-local chest = component.chest
 local meInterface = component.me_interface
 
 local CURRENCY = {
@@ -15,7 +15,17 @@ local CURRENCY = {
 
 local currentBetSize = 0
 
-local chestSize = chest.getInventorySize()
+
+casino.container = nil
+local containerSize = 0
+
+if settings.PAYMENT_METHOD == 'CHEST' then
+    casino.container = component.chest
+    containerSize = casino.container.getInventorySize()
+elseif settings.PAYMENT_METHOD == 'PIM' then
+    casino.container = component.pim
+    containerSize = 40
+end
 
 casino.splitString = function(inputStr, sep)
     if sep == nil then
@@ -36,7 +46,7 @@ casino.reward = function(money)
     money = math.floor(money + 0.5)
     while money > 0 do
         local executed, g = pcall(function()
-            return meInterface.exportItem(CURRENCY, "UP", money < 64 and money or 64).size
+            return meInterface.exportItem(CURRENCY, settings.CONTAINER_GAIN, money < 64 and money or 64).size
         end)
         money = money - (money < 64 and money or 64)
     end
@@ -52,10 +62,10 @@ casino.takeMoney = function(money)
     end
 
     local sum = 0
-    for i = 1, chestSize do
-        local item = chest.getStackInSlot(i)
+    for i = 1, containerSize do
+        local item = casino.container.getStackInSlot(i)
         if item and not item.nbt_hash and item.id == CURRENCY.id then
-            sum = sum + chest.pushItem('DOWN', i, money - sum)
+            sum = sum + casino.container.pushItem(settings.CONTAINER_PAY, i, money - sum)
         end
     end
     if sum < money then
