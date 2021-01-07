@@ -110,11 +110,7 @@ local function drawCurrency(x, y, currency, current)
     buffer.drawText(x + 8, y    , 0, "Валюта: " .. currency.name)
     buffer.drawText(x + 8, y + 1, 0, "Максимальная ставка: " .. (currency.max or "-"))
     buffer.drawText(x + 8, y + 2, 0, "Имеется у казино: " .. casino.getCurrencyInStorage(currency))
-    local img = currency.image
-    if img then
-        casino.downloadFile(REPOSITORY .. "/resources/images/currencies/" .. img, "/home/images/currencies/" .. img)
-        buffer.drawImage(x, y, image.load("/home/images/currencies/" .. img)) -- 6x3
-    end
+    buffer.drawRectangle(x, y, 6, 3, currency.color or 0, 0xE3E3E3, ' ')
 end
 
 local function drawStatic()
