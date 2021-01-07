@@ -17,14 +17,14 @@ table.insert(currencies, {
 
 table.insert(currencies, {
     name = "Железный слиток",
-    color = 0xD5D5D5,
+    color = 0xAAAAAA,
     id = "minecraft:iron_ingot",
     dmg = 0,
 })
 
 table.insert(currencies, {
     name = "Железный блок",
-    color = 0xD5D5D5,
+    color = 0xAAAAAA,
     id = "minecraft:iron_block",
     dmg = 0,
     max = 64
@@ -46,13 +46,13 @@ table.insert(currencies, {
 
 table.insert(currencies, {
     name = "Оловянный слиток",
-    color = 0xE5E5E5,
+    color = 0xCCCCCC,
     id = "IC2:itemIngot",
     dmg = 1
 })
 table.insert(currencies, {
     name = "Оловянный блок",
-    color = 0xE5E5E5,
+    color = 0xCCCCCC,
     id = "Forestry:resourceStorage",
     dmg = 2,
     max = 64
@@ -60,6 +60,7 @@ table.insert(currencies, {
 
 table.insert(currencies, {
     name = "Бесплатно",
+    color = 0xE5E5E5,
 })
 
 return currencies
