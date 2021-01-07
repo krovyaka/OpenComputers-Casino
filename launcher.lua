@@ -10,8 +10,8 @@ local image
 local buffer
 
 REPOSITORY = settings.REPOSITORY
-
 CURRENT_APP = nil
+CURRENT_PLAYER = "-"
 SHOULD_INTERRUPT = false
 
 event.shouldInterrupt = function()
@@ -35,46 +35,18 @@ local state = {
 local requiredDirectories = { "/lib/FormatModules", "/home/images/", "/home/images/games_logo", "/home/images/currencies", "/home/apps" }
 
 local libs = {
-    {
-        url = REPOSITORY .. "/config/settings.lua",
-        path = "/lib/settings.lua"
-    },
-    {
-        url = REPOSITORY .. "/libs/casino.lua",
-        path = "/lib/casino.lua"
-    },
-    {
-        url = REPOSITORY .. "/external/IgorTimofeev/AdvancedLua.lua",
-        path = "/lib/advancedLua.lua"
-    },
-    {
-        url = REPOSITORY .. "/external/IgorTimofeev/Color.lua",
-        path = "/lib/color.lua"
-    },
-    {
-        url = REPOSITORY .. "/external/IgorTimofeev/OCIF.lua",
-        path = "/lib/FormatModules/OCIF.lua"
-    },
-    {
-        url = REPOSITORY .. "/external/IgorTimofeev/Image.lua",
-        path = "/lib/image.lua"
-    },
-    {
-        url = REPOSITORY .. "/external/IgorTimofeev/DoubleBuffering.lua",
-        path = "/lib/doubleBuffering.lua"
-    },
-    {
-        url = REPOSITORY .. "/config/games.lua",
-        path = "/lib/games.lua"
-    },
-    {
-        url = REPOSITORY .. "/config/currencies.lua",
-        path = "/lib/currencies.lua"
-    },
-    {
-        url = REPOSITORY .. "/libs/slot_machine.lua",
-        path = "/lib/slot_machine.lua"
-    }
+    {REPOSITORY .. "/config/settings.lua", "/lib/settings.lua"},
+    {REPOSITORY .. "/libs/casino.lua", "/lib/casino.lua"},
+    {REPOSITORY .. "/external/IgorTimofeev/AdvancedLua.lua", "/lib/advancedLua.lua"},
+    {REPOSITORY .. "/external/IgorTimofeev/Color.lua", "/lib/color.lua"},
+    {REPOSITORY .. "/external/IgorTimofeev/OCIF.lua", "/lib/FormatModules/OCIF.lua"},
+    {REPOSITORY .. "/external/IgorTimofeev/Image.lua", "/lib/image.lua"},
+    {REPOSITORY .. "/external/IgorTimofeev/DoubleBuffering.lua", "/lib/doubleBuffering.lua"},
+    {REPOSITORY .. "/config/games.lua", "/lib/games.lua"},
+    {REPOSITORY .. "/config/currencies.lua", "/lib/currencies.lua"},
+    {REPOSITORY .. "/libs/slot_machine.lua", "/lib/slot_machine.lua"},
+    {REPOSITORY .. "/external/Durex77/db.lua", "/lib/db.lua"},
+    {REPOSITORY .. "/external/Durex77/durexdb.lua", "/lib/durexdb.lua"}
 }
 
 local function isAdmin(player)
@@ -136,7 +108,7 @@ local function drawLibSettings()
     buffer.drawRectangle(49, 6, 112, 45, 0xFFFFFF, 0, " ")
     for i = 1, #libs do
         buffer.drawText(51, 5 + i * 2, 0x0000AA, "Скачать  Правка");
-        buffer.drawText(68, 5 + i * 2, 0, libs[i].path);
+        buffer.drawText(68, 5 + i * 2, 0, libs[i][2]);
     end
     buffer.drawText(51, 5 + (1 + #libs) * 2, 0xff0000, "При редактировании, компьютер не будет защищен от других игроков!");
     buffer.drawText(51, 6 + (1 + #libs) * 2, 0xff0000, "Изменения вступят в силу после перезагрузки!");
@@ -198,6 +170,10 @@ local function onPimPlayerOff(_, name)
     SHOULD_INTERRUPT = true
 end
 
+local function onTouch(_, screen, x, y, mouseKey, name)
+    CURRENT_PLAYER = name
+end
+
 local function handlePim()
     if casino.container.getInventoryName() == 'pim' then
         removeUsers()
@@ -230,7 +206,7 @@ local function initLauncher()
         shell.execute("md " .. requiredDirectories[i])
     end
     for i = 1, #libs do
-        casino.downloadFile(libs[i].url, libs[i].path)
+        casino.downloadFile(libs[i][1], libs[i][2])
     end
     games = require("games")
     currencies = require("currencies")
@@ -245,6 +221,7 @@ drawStatic()
 drawDynamic()
 
 if settings.PAYMENT_METHOD == 'PIM' then event.listen('player_off', onPimPlayerOff) end
+event.listen("touch", onTouch)
 
 while true do
     :: continue :: -- В Lua отсутствует ключевое слово continiue
@@ -309,7 +286,7 @@ while true do
             if lib and x >= 51 and x <= 57 then
                 buffer.drawText(51, y, 0xAAAAAA, "Скачать");
                 buffer.drawChanges()
-                casino.downloadFile(lib.url, lib.path, true)
+                casino.downloadFile(lib[1], lib[2], true)
                 buffer.drawText(51, y, 0x0000AA, "Скачать");
                 buffer.drawChanges()
             end
@@ -318,7 +295,7 @@ while true do
                 local component = require("component")
                 component.gpu.setBackground(0);
                 component.gpu.setForeground(0xffffff);
-                shell.execute("edit " .. lib.path)
+                shell.execute("edit " .. lib[2])
                 drawStatic()
                 drawDynamic()
             end

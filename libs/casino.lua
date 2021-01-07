@@ -1,8 +1,10 @@
-local settings = require("settings")
 local casino = {}
+
+local settings = require("settings")
 local component = require("component")
 local shell = require("shell")
 local filesystem = require("filesystem")
+local durexdb = require("durexdb")
 local meInterface = component.me_interface
 
 local CURRENCY = {
@@ -13,8 +15,8 @@ local CURRENCY = {
     dmg = nil
 }
 
+local db = DurexDatabase:new()
 local currentBetSize = 0
-
 
 casino.container = nil
 local containerSize = 0
@@ -50,6 +52,7 @@ casino.reward = function(money)
         end)
         money = money - (money < 64 and money or 64)
     end
+    db:executeQuery("INSERT INTO MissedRewards " )
 end
 
 casino.takeMoney = function(money)
