@@ -72,6 +72,7 @@ local function drawStatic()
     buffer.drawText(79, 19, 0xffffff, "Нечёт")
     buffer.drawText(91, 19, 0xffffff, "19 до 36")
     buffer.drawRectangle(75, 29, 36, 3,  0xff0000, 0xffffff, ' ')
+    buffer.drawRectangle(75, 25, 36, 3,  0x00ff00, 0xffffff, ' ')
     buffer.drawRectangle(47, 18, 13, 3,  0xff0000, 0xffffff, ' ')
     buffer.drawRectangle(3,  2,  8,  19, 0xffb109, 0xffffff, ' ')
     buffer.drawRectangle(3,  9,  8,  5,  0xffda54, 0xffffff, ' ')
@@ -80,6 +81,7 @@ local function drawStatic()
     buffer.drawRectangle(3,  23, 71, 9,  0x002f15, 0xffffff, " ")
     buffer.drawRectangle(75, 22, 36, 1,  0xaaaaaa, 0xffffff, ' ')
     buffer.drawRectangle(75, 23, 36, 1,  0x002f15, 0xffffff, ' ')
+    buffer.drawText(90, 26, 0xffffff, "Крутить")
     buffer.drawText(90, 30, 0xffffff, "Выход")
     buffer.drawText(50, 19, 0xffffff, "Красное")
     buffer.drawText(64, 19, 0xffffff, "Чёрное")
@@ -143,26 +145,33 @@ local function fixClicks(left, top) -- lol watta hell is this?
         (left > 102 and (top == 5 or top == 9)))
 end
 
-local endBets = 0
 drawStatic()
 message("")
 while true do
     resetBets()
-    endBets = 0
-    while endBets == 0 or (endBets > os.time()) do
-        local e, _, left, top, clickType, _ = event.pull(3, "touch")
+    local ready = false
+    while true do
+        local e, _, left, top, clickType, _ = event.pull("touch")
         if (e ~= nil) then
             local number, money = 0, 1 + clickType * 9
-            if left >= 75 and left <= 110 and top >= 29 and top <= 31 and endBets == 0 then
-                error("Exit by request")
+            if left >= 75 and left <= 110 and top >= 29 and top <= 31 then
+                if ready then
+                    message("Сначала завершите игру")
+                else
+                    error("Exit by request")
+                end
+            end
+            if left >= 75 and left <= 110 and top >= 25 and top <= 27 then
+                if ready then
+                    break
+                else
+                    message("Недоступно до первой ставки")
+                end
             end
             if (fixClicks(left, top)) then
                 local payed, reason = casino.takeMoney(money)
                 if payed then
-                    if (endBets == 0) then
-                        endBets = os.time() + 1080
-                        message("Рулетка крутится через 15 сек после первой ставки.")
-                    end
+                    ready = true
                     if (left > 18) and (left < 102) and (top > 1) and (top < 13) then
                         number = getNumberClick(left, top)
                     end
