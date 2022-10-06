@@ -75,6 +75,10 @@ local libs = {
     {
         url = REPOSITORY .. "/libs/slot_machine.lua",
         path = "/lib/slot_machine.lua"
+    },
+    {
+        url = REPOSITORY .. "/config/openChestConfiguration.lua",
+        path = "/lib/openChestConfiguration.lua"
     }
 }
 

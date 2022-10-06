@@ -127,4 +127,27 @@ table.insert(games, {
             "не превысит количество валюты на счету казино."
 })
 
+table.insert(games, {
+    title = "Лабиринт",
+    file = "game_Labirynth.lua",
+    available = true,
+    image = "game_Labirynth.pic",
+    author = "krovyaka",
+    description = "Лабиринт - цель игры состоит в том, чтобы \n" ..
+            "не отрывая левой кнопки мыши от монитора, не касаясь \n" ..
+            "стенок лабиринта, пройтись от левой точки экрана в правую.\n" ..
+            "При этом создавая неприрывную линию.\n" ..
+            "Прям как в детстве рисовали;)"
+})
+
+table.insert(games, {
+    title = "OpenChest",
+    file = "game_OpenChest.lua",
+    available = false,
+    image = "game_Chests.pic",
+    author = "Durex77",
+    description = ""
+})
+
+
 return games
