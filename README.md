@@ -12,7 +12,7 @@
 2. type 'edit casino'
 3. insert install.lua content
 4. Ctrl + S then Ctrl + W
-5. type 'install'
+5. type 'casino'
 6. edit settings as you need
 7. Ctrl + S then Ctrl + W
 8. type '1'
