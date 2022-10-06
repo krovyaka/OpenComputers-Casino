@@ -224,15 +224,29 @@ local function handlePim()
         removeUsers()
         casino.setCurrency(currencies[1])
         buffer.setResolution(32, 9)
-        buffer.drawRectangle(1, 1, 32, 9, 0xFFFFFF, 0x0, ' ')
-        buffer.drawText(5, 3, 0x000000, 'Наступите, чтобы начать')
-        buffer.drawText(15, 6, 0x000000, ' ||')
-        buffer.drawText(15, 7, 0x000000, ' ||')
-        buffer.drawText(15, 8, 0x000000, '\\  /')
-        buffer.drawText(15, 9, 0x000000, ' \\/')
         buffer.drawChanges()
+        local frame = 0
         while casino.container.getInventoryName() == 'pim' do
-            os.sleep(0.5)
+            if frame < 25 then
+                for i = 1, 5 do
+                    frame = frame + 1
+                    buffer.drawRectangle(1, 1, 32, 9, 0x000000, 0x0, ' ')
+                    buffer.drawSemiPixelLine(frame * 3, 0, frame * 3 - 18, 18, 0xFFFFFF)
+                    buffer.drawText(5, 3, 0x00FFFF, 'Наступите, чтобы начать')
+                    buffer.drawText(15, 6, 0x00FFFF, ' ||')
+                    buffer.drawText(15, 7, 0x00FFFF, ' ||')
+                    buffer.drawText(15, 8, 0x00FFFF, '\\  /')
+                    buffer.drawText(15, 9, 0x00FFFF, ' \\/')
+                    buffer.drawChanges()
+                    os.sleep(0.1)
+                end
+            else
+                frame = frame + 5
+                os.sleep(0.5)
+            end
+            if frame > 150 then
+                frame = 0
+            end
         end
         computer.addUser(casino.container.getInventoryName())
         buffer.drawRectangle(1, 1, 32, 9, 0xFFFFFF, 0x0, ' ')
