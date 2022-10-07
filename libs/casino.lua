@@ -32,6 +32,10 @@ elseif settings.PAYMENT_METHOD == 'CRYSTAL' then
     casino.container = component.crystal
     containerSize = casino.container.getInventorySize()
     storage = component.diamond
+elseif settings.PAYMENT_METHOD == 'DEV' then
+    casino.container = {exportItem = function () return true end}
+    containerSize = math.huge
+    storage = casino.container
 end
 
 casino.splitString = function(inputStr, sep)
@@ -168,6 +172,10 @@ if settings.PAYMENT_METHOD == 'CRYSTAL' then
             end
         end
         return qty or 0
+    end
+elseif settings.PAYMENT_METHOD == 'DEV' then
+    casino.getCurrencyInStorage = function(currency)
+        return -1
     end
 else 
     casino.getCurrencyInStorage = function(currency)
